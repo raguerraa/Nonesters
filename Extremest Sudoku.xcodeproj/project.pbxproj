@@ -16,6 +16,8 @@
 		EB8113C226F693DB00D73573 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB8113C126F693DB00D73573 /* Assets.xcassets */; };
 		EB8113CD26F693DB00D73573 /* Etremest_SudokuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8113CC26F693DB00D73573 /* Etremest_SudokuTests.swift */; };
 		EB8113D826F693DC00D73573 /* Etremest_SudokuUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8113D726F693DC00D73573 /* Etremest_SudokuUITests.swift */; };
+		EBD275A826F819A60093323B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EBD275A726F819A60093323B /* LaunchScreen.storyboard */; };
+		EBE3970026FBF5D80093BBEE /* SKButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE396FF26FBF5D80093BBEE /* SKButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,7 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		EB8113B126F693D800D73573 /* Etremest Sudoku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Etremest Sudoku.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB8113B126F693D800D73573 /* Extremest Sudoku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Extremest Sudoku.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB8113B426F693D800D73573 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EB8113B626F693D800D73573 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		EB8113B826F693D800D73573 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -45,12 +47,14 @@
 		EB8113BF26F693D800D73573 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		EB8113C126F693DB00D73573 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EB8113C326F693DB00D73573 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EB8113C826F693DB00D73573 /* Etremest SudokuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Etremest SudokuTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB8113C826F693DB00D73573 /* Extremest SudokuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Extremest SudokuTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB8113CC26F693DB00D73573 /* Etremest_SudokuTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Etremest_SudokuTests.swift; sourceTree = "<group>"; };
 		EB8113CE26F693DB00D73573 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EB8113D326F693DC00D73573 /* Etremest SudokuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Etremest SudokuUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB8113D326F693DC00D73573 /* Extremest SudokuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Extremest SudokuUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB8113D726F693DC00D73573 /* Etremest_SudokuUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Etremest_SudokuUITests.swift; sourceTree = "<group>"; };
 		EB8113D926F693DC00D73573 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EBD275A726F819A60093323B /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		EBE396FF26FBF5D80093BBEE /* SKButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,9 +85,9 @@
 		EB8113A826F693D800D73573 = {
 			isa = PBXGroup;
 			children = (
-				EB8113B326F693D800D73573 /* Etremest Sudoku */,
-				EB8113CB26F693DB00D73573 /* Etremest SudokuTests */,
-				EB8113D626F693DC00D73573 /* Etremest SudokuUITests */,
+				EB8113B326F693D800D73573 /* Extremest Sudoku */,
+				EB8113CB26F693DB00D73573 /* Extremest SudokuTests */,
+				EB8113D626F693DC00D73573 /* Extremest SudokuUITests */,
 				EB8113B226F693D800D73573 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -91,14 +95,14 @@
 		EB8113B226F693D800D73573 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EB8113B126F693D800D73573 /* Etremest Sudoku.app */,
-				EB8113C826F693DB00D73573 /* Etremest SudokuTests.xctest */,
-				EB8113D326F693DC00D73573 /* Etremest SudokuUITests.xctest */,
+				EB8113B126F693D800D73573 /* Extremest Sudoku.app */,
+				EB8113C826F693DB00D73573 /* Extremest SudokuTests.xctest */,
+				EB8113D326F693DC00D73573 /* Extremest SudokuUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		EB8113B326F693D800D73573 /* Etremest Sudoku */ = {
+		EB8113B326F693D800D73573 /* Extremest Sudoku */ = {
 			isa = PBXGroup;
 			children = (
 				EB8113B426F693D800D73573 /* AppDelegate.swift */,
@@ -109,34 +113,36 @@
 				EB8113BE26F693D800D73573 /* Main.storyboard */,
 				EB8113C126F693DB00D73573 /* Assets.xcassets */,
 				EB8113C326F693DB00D73573 /* Info.plist */,
+				EBD275A726F819A60093323B /* LaunchScreen.storyboard */,
+				EBE396FF26FBF5D80093BBEE /* SKButton.swift */,
 			);
-			path = "Etremest Sudoku";
+			path = "Extremest Sudoku";
 			sourceTree = "<group>";
 		};
-		EB8113CB26F693DB00D73573 /* Etremest SudokuTests */ = {
+		EB8113CB26F693DB00D73573 /* Extremest SudokuTests */ = {
 			isa = PBXGroup;
 			children = (
 				EB8113CC26F693DB00D73573 /* Etremest_SudokuTests.swift */,
 				EB8113CE26F693DB00D73573 /* Info.plist */,
 			);
-			path = "Etremest SudokuTests";
+			path = "Extremest SudokuTests";
 			sourceTree = "<group>";
 		};
-		EB8113D626F693DC00D73573 /* Etremest SudokuUITests */ = {
+		EB8113D626F693DC00D73573 /* Extremest SudokuUITests */ = {
 			isa = PBXGroup;
 			children = (
 				EB8113D726F693DC00D73573 /* Etremest_SudokuUITests.swift */,
 				EB8113D926F693DC00D73573 /* Info.plist */,
 			);
-			path = "Etremest SudokuUITests";
+			path = "Extremest SudokuUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		EB8113B026F693D800D73573 /* Etremest Sudoku */ = {
+		EB8113B026F693D800D73573 /* Extremest Sudoku */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EB8113DC26F693DC00D73573 /* Build configuration list for PBXNativeTarget "Etremest Sudoku" */;
+			buildConfigurationList = EB8113DC26F693DC00D73573 /* Build configuration list for PBXNativeTarget "Extremest Sudoku" */;
 			buildPhases = (
 				EB8113AD26F693D800D73573 /* Sources */,
 				EB8113AE26F693D800D73573 /* Frameworks */,
@@ -146,14 +152,14 @@
 			);
 			dependencies = (
 			);
-			name = "Etremest Sudoku";
+			name = "Extremest Sudoku";
 			productName = "Etremest Sudoku";
-			productReference = EB8113B126F693D800D73573 /* Etremest Sudoku.app */;
+			productReference = EB8113B126F693D800D73573 /* Extremest Sudoku.app */;
 			productType = "com.apple.product-type.application";
 		};
-		EB8113C726F693DB00D73573 /* Etremest SudokuTests */ = {
+		EB8113C726F693DB00D73573 /* Extremest SudokuTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EB8113DF26F693DC00D73573 /* Build configuration list for PBXNativeTarget "Etremest SudokuTests" */;
+			buildConfigurationList = EB8113DF26F693DC00D73573 /* Build configuration list for PBXNativeTarget "Extremest SudokuTests" */;
 			buildPhases = (
 				EB8113C426F693DB00D73573 /* Sources */,
 				EB8113C526F693DB00D73573 /* Frameworks */,
@@ -164,14 +170,14 @@
 			dependencies = (
 				EB8113CA26F693DB00D73573 /* PBXTargetDependency */,
 			);
-			name = "Etremest SudokuTests";
+			name = "Extremest SudokuTests";
 			productName = "Etremest SudokuTests";
-			productReference = EB8113C826F693DB00D73573 /* Etremest SudokuTests.xctest */;
+			productReference = EB8113C826F693DB00D73573 /* Extremest SudokuTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		EB8113D226F693DB00D73573 /* Etremest SudokuUITests */ = {
+		EB8113D226F693DB00D73573 /* Extremest SudokuUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EB8113E226F693DC00D73573 /* Build configuration list for PBXNativeTarget "Etremest SudokuUITests" */;
+			buildConfigurationList = EB8113E226F693DC00D73573 /* Build configuration list for PBXNativeTarget "Extremest SudokuUITests" */;
 			buildPhases = (
 				EB8113CF26F693DB00D73573 /* Sources */,
 				EB8113D026F693DB00D73573 /* Frameworks */,
@@ -182,9 +188,9 @@
 			dependencies = (
 				EB8113D526F693DC00D73573 /* PBXTargetDependency */,
 			);
-			name = "Etremest SudokuUITests";
+			name = "Extremest SudokuUITests";
 			productName = "Etremest SudokuUITests";
-			productReference = EB8113D326F693DC00D73573 /* Etremest SudokuUITests.xctest */;
+			productReference = EB8113D326F693DC00D73573 /* Extremest SudokuUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -209,7 +215,7 @@
 					};
 				};
 			};
-			buildConfigurationList = EB8113AC26F693D800D73573 /* Build configuration list for PBXProject "Etremest Sudoku" */;
+			buildConfigurationList = EB8113AC26F693D800D73573 /* Build configuration list for PBXProject "Extremest Sudoku" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -222,9 +228,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EB8113B026F693D800D73573 /* Etremest Sudoku */,
-				EB8113C726F693DB00D73573 /* Etremest SudokuTests */,
-				EB8113D226F693DB00D73573 /* Etremest SudokuUITests */,
+				EB8113B026F693D800D73573 /* Extremest Sudoku */,
+				EB8113C726F693DB00D73573 /* Extremest SudokuTests */,
+				EB8113D226F693DB00D73573 /* Extremest SudokuUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -237,6 +243,7 @@
 				EB8113C026F693D800D73573 /* Main.storyboard in Resources */,
 				EB8113B726F693D800D73573 /* GameScene.sks in Resources */,
 				EB8113C226F693DB00D73573 /* Assets.xcassets in Resources */,
+				EBD275A826F819A60093323B /* LaunchScreen.storyboard in Resources */,
 				EB8113B926F693D800D73573 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -265,6 +272,7 @@
 				EB8113BB26F693D800D73573 /* GameScene.swift in Sources */,
 				EB8113BD26F693D800D73573 /* GameViewController.swift in Sources */,
 				EB8113B526F693D800D73573 /* AppDelegate.swift in Sources */,
+				EBE3970026FBF5D80093BBEE /* SKButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,12 +297,12 @@
 /* Begin PBXTargetDependency section */
 		EB8113CA26F693DB00D73573 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EB8113B026F693D800D73573 /* Etremest Sudoku */;
+			target = EB8113B026F693D800D73573 /* Extremest Sudoku */;
 			targetProxy = EB8113C926F693DB00D73573 /* PBXContainerItemProxy */;
 		};
 		EB8113D526F693DC00D73573 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EB8113B026F693D800D73573 /* Etremest Sudoku */;
+			target = EB8113B026F693D800D73573 /* Extremest Sudoku */;
 			targetProxy = EB8113D426F693DC00D73573 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -434,15 +442,15 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J6522LJSM9;
-				INFOPLIST_FILE = "Etremest Sudoku/Info.plist";
+				INFOPLIST_FILE = "Extremest Sudoku/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "ronalds.Etremest-Sudoku";
+				PRODUCT_BUNDLE_IDENTIFIER = "ronalds.Extremest-Sudoku";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -453,15 +461,15 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J6522LJSM9;
-				INFOPLIST_FILE = "Etremest Sudoku/Info.plist";
+				INFOPLIST_FILE = "Extremest Sudoku/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "ronalds.Etremest-Sudoku";
+				PRODUCT_BUNDLE_IDENTIFIER = "ronalds.Extremest-Sudoku";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -483,7 +491,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Etremest Sudoku.app/Etremest Sudoku";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Extremest Sudoku.app/Extremest Sudoku";
 			};
 			name = Debug;
 		};
@@ -505,7 +513,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Etremest Sudoku.app/Etremest Sudoku";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Extremest Sudoku.app/Extremest Sudoku";
 			};
 			name = Release;
 		};
@@ -552,7 +560,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EB8113AC26F693D800D73573 /* Build configuration list for PBXProject "Etremest Sudoku" */ = {
+		EB8113AC26F693D800D73573 /* Build configuration list for PBXProject "Extremest Sudoku" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EB8113DA26F693DC00D73573 /* Debug */,
@@ -561,7 +569,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EB8113DC26F693DC00D73573 /* Build configuration list for PBXNativeTarget "Etremest Sudoku" */ = {
+		EB8113DC26F693DC00D73573 /* Build configuration list for PBXNativeTarget "Extremest Sudoku" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EB8113DD26F693DC00D73573 /* Debug */,
@@ -570,7 +578,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EB8113DF26F693DC00D73573 /* Build configuration list for PBXNativeTarget "Etremest SudokuTests" */ = {
+		EB8113DF26F693DC00D73573 /* Build configuration list for PBXNativeTarget "Extremest SudokuTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EB8113E026F693DC00D73573 /* Debug */,
@@ -579,7 +587,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EB8113E226F693DC00D73573 /* Build configuration list for PBXNativeTarget "Etremest SudokuUITests" */ = {
+		EB8113E226F693DC00D73573 /* Build configuration list for PBXNativeTarget "Extremest SudokuUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EB8113E326F693DC00D73573 /* Debug */,

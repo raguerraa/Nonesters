@@ -7,7 +7,7 @@
 
 import UIKit
 import SpriteKit
-import GameplayKit
+//import GameplayKit
 
 class GameViewController: UIViewController {
 
@@ -20,6 +20,7 @@ class GameViewController: UIViewController {
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .aspectFill
                 
+            
                 // Present the scene
                 view.presentScene(scene)
             }
@@ -30,7 +31,7 @@ class GameViewController: UIViewController {
             view.showsNodeCount = true
         }
     }
-
+    /*
     override var shouldAutorotate: Bool {
         return true
     }
@@ -45,5 +46,5 @@ class GameViewController: UIViewController {
 
     override var prefersStatusBarHidden: Bool {
         return true
-    }
+    }*/
 }
