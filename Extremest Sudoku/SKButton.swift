@@ -14,6 +14,9 @@ enum ButtonNodeState {
 class SKButton: SKSpriteNode {
     var isButtonEnabled = true
     var isHighlighted = false
+    
+    private var label: SKLabelNode = SKLabelNode()
+    
     /* Setup a dummy action closure */
     var selectedHandler: (SKButton) -> Void = { _ in print("No button action set") }
 
@@ -49,10 +52,9 @@ class SKButton: SKSpriteNode {
                     isHighlighted = true
                     break
             }
-       
         }
     }
-/*
+
     /* Support for NSKeyedArchiver (loading objects from SK Scene Editor */
     required init?(coder aDecoder: NSCoder) {
 
@@ -62,7 +64,37 @@ class SKButton: SKSpriteNode {
         /* Enable touch on button node */
         self.isUserInteractionEnabled = true
     }
-*/
+
+    override init(texture: SKTexture?, color: UIColor, size: CGSize) {
+        super.init(texture: texture, color: color, size: size)
+        
+        label.text = ""
+        label.fontColor = .white
+        label.horizontalAlignmentMode = .center
+        label.verticalAlignmentMode = .center
+        label.fontSize = 30
+        label.fontName = "SFPro-Black"
+        
+        self.addChild(label)
+    }
+    
+    func changeLabel(text: String){
+        label.text = text
+    }
+    
+    func getLabel()->String{
+        return label.text ?? ""
+    }
+    
+    func changeFontColor(color: UIColor){
+        label.fontColor = color
+    }
+    
+    func getFontColor()-> UIColor{
+        return label.fontColor ?? .white
+    }
+    
+    
     // MARK: - Touch handling
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if isButtonEnabled {
