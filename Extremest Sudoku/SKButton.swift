@@ -30,13 +30,18 @@ class SKButton: SKSpriteNode {
 
                     /* Visible */
                     //self.alpha = 1
-                    self.color = self.color.withAlphaComponent(1)
+                    // TODO: CHange to be only self.color
+                    
+                        self.color = self.color.withAlphaComponent(1)
+                   
+                    
                     break
                 case .Selected:
                     /* Semi transparent */
                     //self.alpha = 0.5
-                    self.color = self.color.withAlphaComponent(0.5)
-
+                    
+                        self.color = self.color.withAlphaComponent(0.5)
+                    
                     break
                 case .Hidden:
                     /* Disable touch */
@@ -47,8 +52,10 @@ class SKButton: SKSpriteNode {
                     break
                 case .Highlighted:
                     /* Semi transparent */
-                    self.color = self.color.withAlphaComponent(0.5)
-        
+                    
+                   
+                        self.color = self.color.withAlphaComponent(0.5)
+                   
                     isHighlighted = true
                     break
             }

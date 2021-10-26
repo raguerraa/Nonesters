@@ -11,23 +11,26 @@ import GameplayKit
 class GameScene: SKScene {
     
     private var boardCells = [[SKButton]]()
-    private var boardContent = [[Int]]()
     private var gameBoard : SKSpriteNode?
     
     private var numberPad : SKSpriteNode?
     private var numberPadKeys = [SKButton]()
     private var spinnyNode : SKShapeNode?
     private var selectedCell = SKButton()
+    private var checkButton = SKButton()
     
     // Since in sudoku the symbols used can be anything, colors abstracts the idea of symbols
     // and the black color reresents like in physics the absense of light
     private let COLORS = ["1","2","3","4","5","6","7","8","9"]
     private let blackColor = "0"
     
+    private var isUserFirstUndo = true
+    
     private var solutions = [[[String]]]()
     
     private var theSolution = [[String]]()
     private var theSudokuPuzzle = [[String]]()
+    private var userMoves = Stack<(SKButton, String)>()
     
     
     private var seed = "827154396965327148341689752593468271472513689618972435786235914154796823239841567"
@@ -50,6 +53,7 @@ class GameScene: SKScene {
         // Let the top left corner cell be selected
         boardCells[0][0].state = .Highlighted
         selectedCell = boardCells[0][0]
+        
 
     }
     
@@ -121,44 +125,216 @@ class GameScene: SKScene {
                                           (sideLengthNumberKey/2.0 - separation/2.0)/2.0 +
                                             2*separation + separation/2.0)
                 
+                
+                var buttonConfiguration = UIImage.SymbolConfiguration(weight: .bold)
                 // configure Check button
-                let checkButton = SKButton(color: self.backgroundColor, size: CGSize(width:
-                                           sideLengthNumberKey/2.0 - separation/2.0,
+                
+                let checkButtonlength =  sideLengthNumberKey/2.0 - separation/2.0
+                
+                let containerCheckButton = SKSpriteNode(color: self.backgroundColor, size: CGSize(width:
+                                           checkButtonlength,
                                            height: sideLengthNumberKey))
+                
+                containerCheckButton.position = CGPoint(x: xcoordinatekeyPosition, y: ycoordinatekeyPosition)
+                
+                var playImage = UIImage(systemName: "checkmark", withConfiguration: buttonConfiguration)
+                playImage = playImage?.withRenderingMode(.alwaysOriginal)
+                playImage = playImage?.withColor(.green)
+                var texture = SKTexture(image: playImage!)
+                checkButton = SKButton(texture: texture, color: .white, size: CGSize(width:
+                                           checkButtonlength - 8*separation,
+                                           height: checkButtonlength - 8*separation))
+                
+                containerCheckButton.addChild(checkButton)
+                
                 checkButton.name = "checkButton"
-                checkButton.position = CGPoint(x: xcoordinatekeyPosition, y: ycoordinatekeyPosition)
-                checkButton.state = .Active
-                checkButton.changeLabel(text: ">")
-                numberPad.addChild(checkButton)
+                checkButton.position = .zero
+                checkButton.state = .Highlighted
+                checkButton.colorBlendFactor = 1
+                
+                
+                checkButton.selectedHandler = checkSudokuCorrectness
+                numberPad.addChild(containerCheckButton)
                 
                 
                 // configure undo button
+                
+                let undoButtonLength = sideLengthNumberKey/2.0 - separation - separation/2.0
                 xcoordinatekeyPosition = -xcoordinatekeyPosition - separation/2.0
-                /*
-                let image = UIImage(systemName: "arrow.counterclockwise")
-                let texture = SKTexture(image: image!)
-                */
-                let undoButton = SKButton( color: self.backgroundColor, size: CGSize(width:
-                                           sideLengthNumberKey/2.0 - separation - separation/2.0,
-                                           height: sideLengthNumberKey))
+                
+                let undoContainer  = SKSpriteNode(color: self.backgroundColor, size: CGSize(width: undoButtonLength,
+                                    height: sideLengthNumberKey))
+                
+                undoContainer.position = CGPoint(x: xcoordinatekeyPosition, y: ycoordinatekeyPosition)
+                
+                buttonConfiguration = UIImage.SymbolConfiguration(weight: .light)
+                var image = UIImage(systemName: "arrow.uturn.backward", withConfiguration: buttonConfiguration)
+                image = image?.withRenderingMode(.alwaysOriginal)
+                image = image?.withColor(.white)
+                texture = SKTexture(image: image!)
+                
+                let undoButton = SKButton(texture: texture, color: .white, size: CGSize(width:
+                                        undoButtonLength - 4*separation, height:undoButtonLength - 4*separation))
+                
+                undoContainer.addChild(undoButton)
+                undoButton.colorBlendFactor = 1
                 undoButton.name = "undoButton"
-                
-                
-                undoButton.position = CGPoint(x: xcoordinatekeyPosition, y: ycoordinatekeyPosition)
+                undoButton.selectedHandler = undo
                 undoButton.state = .Active
-                undoButton.changeLabel(text: "@")
-                numberPad.addChild(undoButton)
+                numberPad.addChild(undoContainer)
             }
         }else{
             print("Game Board has not been configure")
         }
+    }
+    
+    // This is an assamption about how the user would like the undo work. the user doesn't care
+    // about the changes it makes to a particular cell, but only the last change. This change is
+    // saved in the moves stack.
+    func undo(button: SKButton){
+        
+        if userMoves.isEmpty {
+            return
+        }
+        
+        // The user doesn't care about the last move, since it is working on it.
+        if isUserFirstUndo {
+            _ = userMoves.pop()
+        }
+        // The previous move will be retrieve.
+        
+        let lastMove =  userMoves.pop()
+        
+        printSk(stk: userMoves)
+        
+        if let (lastCell, number) = lastMove {
+            // Make the old selected cell empty and active
+            selectedCell.state = .Active
+            
+            // Retrive the old value to the new selected cell
+            selectedCell = lastCell
+            selectedCell.state = .Highlighted
+            selectedCell.changeLabel(text: number)
+        }
+        isUserFirstUndo = false
+    }
+    
+    func printSk(stk: Stack<(SKButton,String)>){
+        var r = stk
+        while !r.isEmpty {
+            if r.peek()?.1 == ""{
+                _ = r.pop()
+                print("0", terminator: " ")
+            }else{
+                print(r.pop()?.1 ?? "N/A", terminator: " ")
+            }
+        }
+        
+        print("========>")
+    }
+    func checkSudokuCorrectness(button: SKButton){
+        var correct = true
+        let userSolution = getUserSolutionAttempt(board: boardCells)
+        
+        for y in 0..<boardCells.count{
+            for x in 0..<boardCells[0].count{
+                
+                if userSolution[y][x] != theSolution[y][x]{
+                    correct = false
+                }
+            }
+        }
+        
+        
+        if correct {
+       
+            let ac = UIAlertController(title: "Correct", message: "Good Job",
+                                    preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .cancel))
+            view?.window?.rootViewController?.present(ac, animated: true)
+        }else{
+            let ac = UIAlertController(title: "Incorrect", message: "Correct it Or Quit",
+                                       preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .cancel))
+            view?.window?.rootViewController?.present(ac, animated: true)
+            
+        }
+
+    }
+    
+    func getUserSolutionAttempt(board: [[SKButton]])->[[String]]{
+        
+        var userSolution = [[String]]()
+        for y in 0..<board.count{
+            var row = [String]()
+            for x in 0..<board[0].count{
+                
+                let cellContent = board[y][x].getLabel()
+                
+                if cellContent == ""{
+                    row.append(blackColor)
+                }else{
+                    row.append(board[y][x].getLabel())
+                }
+            }
+            userSolution.append(row)
+            row = []
+        }
+        return userSolution
     }
         
     func changeNumber(button: SKButton){
         
         let number = button.getLabel()
         if selectedCell.getFontColor() == UIColor.init(red: 1, green: 1, blue: 1, alpha: 1) {
-            selectedCell.changeLabel(text: number)
+            
+            // If the selected cell has a number that is the same input number the user wants to add
+            // then don't add that number to the user moves stack.
+            if number != selectedCell.getLabel() {
+                
+                // If the cell selected is empty then add that to the move stack
+                // becuase it counts as a move and the incoming number with the same cell as the
+                // next move.
+                if selectedCell.getLabel() == "" {
+                    userMoves.push((selectedCell, selectedCell.getLabel()))
+                    userMoves.push((selectedCell, number))
+                }else{
+                    
+                    let lastMove = userMoves.peek()
+                    if let (lastMoveCell, _) = lastMove {
+                        // If we are changing the selected cell number with another number
+                        // then only add that number with the same cell as a move.
+                        if selectedCell.isEqual(lastMoveCell) {
+                            
+                            userMoves.push((selectedCell, number))
+                            
+                        }else{
+                            // If the selected cell is differente than the last move cell
+                            // then save the number that was in the selected cell so that it can be
+                            // restored as the previous move. Then, save the new number with the
+                            // same cell as a new move.
+                            userMoves.push((selectedCell, selectedCell.getLabel()))
+                            userMoves.push((selectedCell, number))
+                        }
+                    }
+                }
+                // Update last move and selected cell
+                selectedCell.changeLabel(text: number)
+                printSk(stk: userMoves)
+                
+                // Since the user just made one or two moves, then the next time, it makes an undo
+                // it will be the first undo
+                isUserFirstUndo = true
+            }
+        }
+        
+        let userSolution = getUserSolutionAttempt(board: boardCells)
+    
+        let (y, x) = findEmptyCell(sudokuPuzzle: userSolution)
+        
+        // If there is no empty cells, then make the checkButton clickable
+        if (y == -1) && (x == -1){
+            checkButton.state = .Active
         }
     }
     
@@ -235,6 +411,32 @@ class GameScene: SKScene {
                 shiftDistanceX = separation + xTopLeftCoordinate
                 shiftDistanceY = shiftDistanceY - separation - sideLength
             }
+            
+            // TODO create my own alert message window for the game
+            let messageBox = SKSpriteNode()
+            messageBox.color = .green
+            messageBox.position = .zero
+            messageBox.size = CGSize(width: gameBoard.size.width - 2*sideLength, height: gameBoard.size.height - 4*sideLength)
+            
+            // Let's add the message label
+            let message = SKLabelNode()
+            message.fontColor = .white
+            
+            
+            message.lineBreakMode = .byClipping
+     
+            message.text = "Fill all Empty Cells"
+            message.position = .zero
+            message.fontName = "SFPro-Black"
+            message.fontSize = 30
+            message.horizontalAlignmentMode = .center
+            
+            gameBoard.addChild(messageBox)
+            messageBox.addChild(message)
+            
+            messageBox.zPosition = 1
+            messageBox.isHidden = true
+            
         }
     }
     
@@ -699,5 +901,19 @@ extension String{
     
     subscript(i: Int)->String{
         return String(self[index(startIndex, offsetBy: i)])
+    }
+}
+extension UIImage {
+    func withColor(_ color: UIColor) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        guard let ctx = UIGraphicsGetCurrentContext(), let cgImage = cgImage else { return self }
+        color.setFill()
+        ctx.translateBy(x: 0, y: size.height)
+        ctx.scaleBy(x: 1.0, y: -1.0)
+        ctx.clip(to: CGRect(x: 0, y: 0, width: size.width, height: size.height), mask: cgImage)
+        ctx.fill(CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        guard let colored = UIGraphicsGetImageFromCurrentImageContext() else { return self }
+        UIGraphicsEndImageContext()
+        return colored
     }
 }

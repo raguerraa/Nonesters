@@ -3,10 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EB713C732727CC22002557DA /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB713C722727CC22002557DA /* Stack.swift */; };
+		EB713C762727D1F7002557DA /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = EB713C752727D1F7002557DA /* DequeModule */; };
+		EB713C782727D1F7002557DA /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = EB713C772727D1F7002557DA /* Collections */; };
 		EB8113B526F693D800D73573 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8113B426F693D800D73573 /* AppDelegate.swift */; };
 		EB8113B726F693D800D73573 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = EB8113B626F693D800D73573 /* GameScene.sks */; };
 		EB8113B926F693D800D73573 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = EB8113B826F693D800D73573 /* Actions.sks */; };
@@ -38,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EB713C722727CC22002557DA /* Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 		EB8113B126F693D800D73573 /* Extremest Sudoku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Extremest Sudoku.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB8113B426F693D800D73573 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EB8113B626F693D800D73573 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -62,6 +66,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB713C782727D1F7002557DA /* Collections in Frameworks */,
+				EB713C762727D1F7002557DA /* DequeModule in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,6 +88,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EB713C712727CBDF002557DA /* DataStructures */ = {
+			isa = PBXGroup;
+			children = (
+				EB713C722727CC22002557DA /* Stack.swift */,
+			);
+			path = DataStructures;
+			sourceTree = "<group>";
+		};
 		EB8113A826F693D800D73573 = {
 			isa = PBXGroup;
 			children = (
@@ -105,6 +119,7 @@
 		EB8113B326F693D800D73573 /* Extremest Sudoku */ = {
 			isa = PBXGroup;
 			children = (
+				EB713C712727CBDF002557DA /* DataStructures */,
 				EB8113B426F693D800D73573 /* AppDelegate.swift */,
 				EB8113B626F693D800D73573 /* GameScene.sks */,
 				EB8113B826F693D800D73573 /* Actions.sks */,
@@ -153,6 +168,10 @@
 			dependencies = (
 			);
 			name = "Extremest Sudoku";
+			packageProductDependencies = (
+				EB713C752727D1F7002557DA /* DequeModule */,
+				EB713C772727D1F7002557DA /* Collections */,
+			);
 			productName = "Etremest Sudoku";
 			productReference = EB8113B126F693D800D73573 /* Extremest Sudoku.app */;
 			productType = "com.apple.product-type.application";
@@ -224,6 +243,9 @@
 				Base,
 			);
 			mainGroup = EB8113A826F693D800D73573;
+			packageReferences = (
+				EB713C742727D1F7002557DA /* XCRemoteSwiftPackageReference "swift-collections" */,
+			);
 			productRefGroup = EB8113B226F693D800D73573 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -270,6 +292,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB8113BB26F693D800D73573 /* GameScene.swift in Sources */,
+				EB713C732727CC22002557DA /* Stack.swift in Sources */,
 				EB8113BD26F693D800D73573 /* GameViewController.swift in Sources */,
 				EB8113B526F693D800D73573 /* AppDelegate.swift in Sources */,
 				EBE3970026FBF5D80093BBEE /* SKButton.swift in Sources */,
@@ -370,7 +393,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -425,7 +448,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -597,6 +620,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EB713C742727D1F7002557DA /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EB713C752727D1F7002557DA /* DequeModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB713C742727D1F7002557DA /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = DequeModule;
+		};
+		EB713C772727D1F7002557DA /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB713C742727D1F7002557DA /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EB8113A926F693D800D73573 /* Project object */;
 }
