@@ -80,7 +80,7 @@ class SKButton: SKSpriteNode {
         label.horizontalAlignmentMode = .center
         label.verticalAlignmentMode = .center
         label.fontSize = 30
-        label.fontName = "SFPro-Black"
+        label.fontName = "PingFangHK-Regular"
         
         self.addChild(label)
     }
@@ -101,6 +101,12 @@ class SKButton: SKSpriteNode {
         return label.fontColor ?? .white
     }
     
+    func changeFontSize(fontSize: CGFloat){
+        label.fontSize = fontSize
+    }
+    func changeFont(fontName: String){
+        label.fontName = fontName
+    }
     
     // MARK: - Touch handling
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

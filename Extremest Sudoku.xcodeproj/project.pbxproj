@@ -10,6 +10,8 @@
 		EB713C732727CC22002557DA /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB713C722727CC22002557DA /* Stack.swift */; };
 		EB713C762727D1F7002557DA /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = EB713C752727D1F7002557DA /* DequeModule */; };
 		EB713C782727D1F7002557DA /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = EB713C772727D1F7002557DA /* Collections */; };
+		EB739BFC2729F729007B4B44 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB739BFB2729F729007B4B44 /* MenuViewController.swift */; };
+		EB739BFE272A2F15007B4B44 /* ScoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB739BFD272A2F15007B4B44 /* ScoreViewController.swift */; };
 		EB8113B526F693D800D73573 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8113B426F693D800D73573 /* AppDelegate.swift */; };
 		EB8113B726F693D800D73573 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = EB8113B626F693D800D73573 /* GameScene.sks */; };
 		EB8113B926F693D800D73573 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = EB8113B826F693D800D73573 /* Actions.sks */; };
@@ -42,6 +44,8 @@
 
 /* Begin PBXFileReference section */
 		EB713C722727CC22002557DA /* Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
+		EB739BFB2729F729007B4B44 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MenuViewController.swift; path = DataStructures/MenuViewController.swift; sourceTree = "<group>"; };
+		EB739BFD272A2F15007B4B44 /* ScoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreViewController.swift; sourceTree = "<group>"; };
 		EB8113B126F693D800D73573 /* Extremest Sudoku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Extremest Sudoku.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB8113B426F693D800D73573 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EB8113B626F693D800D73573 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -120,6 +124,8 @@
 			isa = PBXGroup;
 			children = (
 				EB713C712727CBDF002557DA /* DataStructures */,
+				EB739BFB2729F729007B4B44 /* MenuViewController.swift */,
+				EB739BFD272A2F15007B4B44 /* ScoreViewController.swift */,
 				EB8113B426F693D800D73573 /* AppDelegate.swift */,
 				EB8113B626F693D800D73573 /* GameScene.sks */,
 				EB8113B826F693D800D73573 /* Actions.sks */,
@@ -291,7 +297,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB739BFE272A2F15007B4B44 /* ScoreViewController.swift in Sources */,
 				EB8113BB26F693D800D73573 /* GameScene.swift in Sources */,
+				EB739BFC2729F729007B4B44 /* MenuViewController.swift in Sources */,
 				EB713C732727CC22002557DA /* Stack.swift in Sources */,
 				EB8113BD26F693D800D73573 /* GameViewController.swift in Sources */,
 				EB8113B526F693D800D73573 /* AppDelegate.swift in Sources */,
