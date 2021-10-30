@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="N96-2I-pOG">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="N96-2I-pOG">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -16,55 +17,96 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="naruto" translatesAutoresizingMaskIntoConstraints="NO" id="Jfc-0d-JPB">
+                                <rect key="frame" x="0.0" y="-41" width="437" height="1024"/>
+                            </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="18" translatesAutoresizingMaskIntoConstraints="NO" id="z3b-k0-Tch">
-                                <rect key="frame" x="57" y="298" width="300" height="300"/>
+                                <rect key="frame" x="70" y="294" width="274" height="300"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TvU-L3-ZPH">
-                                        <rect key="frame" x="0.0" y="0.0" width="300" height="61.5"/>
+                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TvU-L3-ZPH">
+                                        <rect key="frame" x="0.0" y="0.0" width="274" height="61.5"/>
                                         <color key="backgroundColor" systemColor="systemGreenColor"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                         <state key="normal" title="Easy"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="10"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                         <connections>
                                             <action selector="goToGameScene:" destination="N96-2I-pOG" eventType="touchUpInside" id="83W-2H-ygx"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tHL-fE-uxD">
-                                        <rect key="frame" x="0.0" y="79.5" width="300" height="61.5"/>
+                                        <rect key="frame" x="0.0" y="79.5" width="274" height="61.5"/>
                                         <color key="backgroundColor" systemColor="systemGreenColor"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                         <state key="normal" title="Hard"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="10"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JdF-Jw-HuR">
-                                        <rect key="frame" x="0.0" y="159" width="300" height="61.5"/>
+                                        <rect key="frame" x="0.0" y="159" width="274" height="61.5"/>
                                         <color key="backgroundColor" systemColor="systemGreenColor"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                         <state key="normal" title="Extremest"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="10"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vaE-Tl-0ol">
-                                        <rect key="frame" x="0.0" y="238.5" width="300" height="61.5"/>
+                                        <rect key="frame" x="0.0" y="238.5" width="274" height="61.5"/>
                                         <color key="backgroundColor" systemColor="systemPinkColor"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                         <state key="normal" title="Choose Character"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="10"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                     </button>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="300" id="Gg8-aH-ofs"/>
-                                    <constraint firstAttribute="height" constant="300" id="eGp-Bf-eay"/>
+                                    <constraint firstAttribute="width" secondItem="z3b-k0-Tch" secondAttribute="height" multiplier="137:150" id="Rg3-XP-3nf"/>
                                 </constraints>
                             </stackView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="narutoLogo2" translatesAutoresizingMaskIntoConstraints="NO" id="btI-T2-zp7">
+                                <rect key="frame" x="0.0" y="25" width="414" height="131"/>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="IlY-aw-VVT"/>
                         <color key="backgroundColor" red="0.18440192612144835" green="0.34782458109045833" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="tintColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="deviceRGB"/>
                         <constraints>
-                            <constraint firstItem="z3b-k0-Tch" firstAttribute="centerY" secondItem="JZE-D0-BZ0" secondAttribute="centerY" id="3kV-dm-ReU"/>
+                            <constraint firstAttribute="trailing" secondItem="Jfc-0d-JPB" secondAttribute="trailing" constant="-23" id="A2Y-DU-kkF"/>
+                            <constraint firstItem="z3b-k0-Tch" firstAttribute="top" secondItem="btI-T2-zp7" secondAttribute="bottom" constant="138" id="FPJ-tc-8Eh"/>
+                            <constraint firstItem="z3b-k0-Tch" firstAttribute="leading" secondItem="IlY-aw-VVT" secondAttribute="leading" constant="70" id="HHP-We-xyQ"/>
+                            <constraint firstAttribute="bottom" secondItem="Jfc-0d-JPB" secondAttribute="bottom" constant="-87" id="Hxw-j2-7cY"/>
+                            <constraint firstItem="z3b-k0-Tch" firstAttribute="top" secondItem="IlY-aw-VVT" secondAttribute="top" constant="250" id="NBV-ff-Ud6"/>
+                            <constraint firstItem="btI-T2-zp7" firstAttribute="trailing" secondItem="IlY-aw-VVT" secondAttribute="trailing" id="Sha-kL-jFf"/>
+                            <constraint firstItem="Jfc-0d-JPB" firstAttribute="leading" secondItem="IlY-aw-VVT" secondAttribute="leading" id="VtS-uC-j5R"/>
+                            <constraint firstItem="btI-T2-zp7" firstAttribute="top" secondItem="JZE-D0-BZ0" secondAttribute="top" constant="25" id="WcL-Op-N1g"/>
+                            <constraint firstItem="Jfc-0d-JPB" firstAttribute="top" secondItem="JZE-D0-BZ0" secondAttribute="top" constant="-41" id="Xhz-mI-VKt"/>
+                            <constraint firstItem="IlY-aw-VVT" firstAttribute="trailing" secondItem="z3b-k0-Tch" secondAttribute="trailing" constant="70" id="fEN-ho-Bwk"/>
+                            <constraint firstItem="btI-T2-zp7" firstAttribute="leading" secondItem="IlY-aw-VVT" secondAttribute="leading" id="hMo-LV-Hzc"/>
                             <constraint firstItem="z3b-k0-Tch" firstAttribute="centerX" secondItem="JZE-D0-BZ0" secondAttribute="centerX" id="quD-xD-udC"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="chooseCharacterButton" destination="vaE-Tl-0ol" id="CA6-r1-7RT"/>
+                        <outlet property="easyLevelButton" destination="TvU-L3-ZPH" id="J9J-hD-ITf"/>
+                        <outlet property="extremeLevelButton" destination="JdF-Jw-HuR" id="lDk-b4-Aop"/>
+                        <outlet property="hardLevelButton" destination="tHL-fE-uxD" id="rC7-Io-OKo"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9Pw-FP-dvg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-975" y="-54"/>
+            <point key="canvasLocation" x="-975.36231884057975" y="-54.241071428571423"/>
         </scene>
         <!--Game View Controller-->
         <scene sceneID="tXr-a1-R10">
@@ -146,6 +188,8 @@
         </scene>
     </scenes>
     <resources>
+        <image name="naruto" width="770" height="1500"/>
+        <image name="narutoLogo2" width="1280" height="614"/>
         <systemColor name="systemGreenColor">
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

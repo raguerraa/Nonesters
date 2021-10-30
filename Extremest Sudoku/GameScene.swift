@@ -1,9 +1,9 @@
 //
-//  GameScene.swift
-//  Etremest Sudoku
 //
-//  Created by Owner on 9/18/21.
 //
+//
+//
+
 
 import SpriteKit
 import GameplayKit
@@ -80,30 +80,74 @@ class GameScene: SKScene {
     var countDown = 3600
     private var isTimerCounting = false
     
-    
-    
+    override func sceneDidLoad(){
+        print("scene did load")
+    }
+
     override func didMove(to view: SKView) {
+        print("scene did move")
+        
         
         //(theSudokuPuzzle, theSolution) = generate9By9SudokuByBacktracking()
-        theSudokuPuzzle = stringSudokuToDoubleArraySudoku(size: 9, sudoku: seedno)
-        theSolution = stringSudokuToDoubleArraySudoku(size: 9, sudoku: seed)
+        //theSudokuPuzzle = stringSudokuToDoubleArraySudoku(size: 9, sudoku: seedno)
+        //theSolution = stringSudokuToDoubleArraySudoku(size: 9, sudoku: seed)
         configureTopBarButtons()
         configureGameBoard()
         configureNumberPad()
+        configureCharacter()
       
         // Let the top left corner cell be selected
         boardCells[0][0].state = .Highlighted
         selectedCell = boardCells[0][0]
         
-        startTimer()
-        
-        configureCharacter()
-        animateGameCharacter()
-        
-        
         
 
     }
+    
+
+    func viewDidAppear(){
+        (theSudokuPuzzle, theSolution) = generate9By9SudokuByBacktracking()
+        print("scene did apear")
+    }
+    
+    func initiateGame(){
+        
+        startTimer()
+        
+        animateGameCharacter()
+        
+        animateBackground()
+    }
+
+    
+    func animateBackground(){
+ 
+        animateBackgroundElement(element: "mountain1_0", elementTwin: "mountain1_1", duration: 2)
+        animateBackgroundElement(element: "mountain2_0", elementTwin: "mountain2_1", duration: 15)
+    }
+    
+    func animateBackgroundElement(element: String, elementTwin: String, duration: TimeInterval){
+        
+        let foreground = childNode(withName: element) as? SKSpriteNode
+        let foregroundTwin = childNode(withName: elementTwin) as? SKSpriteNode
+        
+        if let foreground = foreground{
+            if let foregroundTwin = foregroundTwin{
+                
+
+                let mountainWidth = foreground.size.width
+        
+                let moveLeft = SKAction.moveBy(x: -mountainWidth, y: 0, duration: duration)
+                let moveReset = SKAction.moveBy(x: mountainWidth, y: 0, duration: 0)
+                let moveLoop = SKAction.sequence([moveLeft,moveReset])
+                let moveForever = SKAction.repeatForever(moveLoop)
+                
+                foreground.run(moveForever)
+                foregroundTwin.run(moveForever)
+            }
+        }
+    }
+    
     func configureCharacter(){
         
         // TODO: Assign game character
@@ -557,13 +601,14 @@ class GameScene: SKScene {
                     cell.position = CGPoint(x: shiftDistanceX + sideLength/2,
                                             y: shiftDistanceY - sideLength/2)
                     cell.name = "cell" + String(cellNumber)
-                    
+                    /*
                     if theSudokuPuzzle[i][j] != BLACKCOLORSYMBOL.name {
                         cell.changeLabel(text: theSudokuPuzzle[i][j])
                         cell.changeFontColor(color: .black)
                     }else{
                         cell.changeFontColor(color: .white)
-                    }
+                    }*/
+                    cell.changeLabel(text: "")
                     cell.state = .Active
    
                     gameBoard.addChild(cell)
@@ -593,7 +638,7 @@ class GameScene: SKScene {
      
             message.text = "Fill all Empty Cells"
             message.position = .zero
-            message.fontName = "SFPro-Black"
+          
             message.fontSize = 30
             message.horizontalAlignmentMode = .center
             

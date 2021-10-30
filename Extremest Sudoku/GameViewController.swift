@@ -24,6 +24,8 @@ class GameViewController: UIViewController {
                 scene.scaleMode = .aspectFill
         
                 // Present the scene
+                scene.sceneDidLoad()
+                
                 view.presentScene(scene)
                 
                 // Initialize the scene
