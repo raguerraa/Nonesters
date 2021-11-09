@@ -13,6 +13,9 @@ class GameViewController: UIViewController {
     
     // Declare a gameScene property so that the GameViewController has acces to it
     var currentGameScene: GameScene?
+    var characterName = String()
+    var gameLevel = GameLevel()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,12 +28,15 @@ class GameViewController: UIViewController {
         
                 // Present the scene
                 scene.sceneDidLoad()
+                // Initialize the scene
+                currentGameScene = scene as? GameScene
+                
+                currentGameScene?.gameLevel = gameLevel
+                currentGameScene?.gameCharacterName = characterName
+                currentGameScene?.viewController = self
                 
                 view.presentScene(scene)
                 
-                // Initialize the scene
-                currentGameScene = scene as? GameScene
-                currentGameScene?.viewController = self
             }
             
             view.ignoresSiblingOrder = true
@@ -39,6 +45,13 @@ class GameViewController: UIViewController {
             view.showsNodeCount = true
         }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        currentGameScene?.initiateGame()
+    }
+    
+  
     
     func congratulateUser(correct: Bool){
  

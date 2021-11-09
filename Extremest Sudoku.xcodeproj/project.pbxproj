@@ -21,7 +21,12 @@
 		EB8113C226F693DB00D73573 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB8113C126F693DB00D73573 /* Assets.xcassets */; };
 		EB8113CD26F693DB00D73573 /* Etremest_SudokuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8113CC26F693DB00D73573 /* Etremest_SudokuTests.swift */; };
 		EB8113D826F693DC00D73573 /* Etremest_SudokuUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8113D726F693DC00D73573 /* Etremest_SudokuUITests.swift */; };
+		EBC11DBE273503C2005C62A1 /* SnowBackground.sks in Resources */ = {isa = PBXBuildFile; fileRef = EBC11DBD273503C2005C62A1 /* SnowBackground.sks */; };
 		EBD275A826F819A60093323B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EBD275A726F819A60093323B /* LaunchScreen.storyboard */; };
+		EBDDD8FE2731F13900F5EB53 /* GameLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDDD8FD2731F13900F5EB53 /* GameLevel.swift */; };
+		EBDDD90027324FA400F5EB53 /* ImagePickerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDDD8FF27324FA400F5EB53 /* ImagePickerCollectionViewCell.swift */; };
+		EBDDD9022733230900F5EB53 /* GameCharacter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDDD9012733230900F5EB53 /* GameCharacter.swift */; };
+		EBDDD90427334DD500F5EB53 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDDD90327334DD500F5EB53 /* Queue.swift */; };
 		EBE3970026FBF5D80093BBEE /* SKButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE396FF26FBF5D80093BBEE /* SKButton.swift */; };
 /* End PBXBuildFile section */
 
@@ -61,7 +66,12 @@
 		EB8113D326F693DC00D73573 /* Extremest SudokuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Extremest SudokuUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB8113D726F693DC00D73573 /* Etremest_SudokuUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Etremest_SudokuUITests.swift; sourceTree = "<group>"; };
 		EB8113D926F693DC00D73573 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EBC11DBD273503C2005C62A1 /* SnowBackground.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SnowBackground.sks; sourceTree = "<group>"; };
 		EBD275A726F819A60093323B /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		EBDDD8FD2731F13900F5EB53 /* GameLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLevel.swift; sourceTree = "<group>"; };
+		EBDDD8FF27324FA400F5EB53 /* ImagePickerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerCollectionViewCell.swift; sourceTree = "<group>"; };
+		EBDDD9012733230900F5EB53 /* GameCharacter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCharacter.swift; sourceTree = "<group>"; };
+		EBDDD90327334DD500F5EB53 /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		EBE396FF26FBF5D80093BBEE /* SKButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -95,7 +105,12 @@
 		EB713C712727CBDF002557DA /* DataStructures */ = {
 			isa = PBXGroup;
 			children = (
+				EBE396FF26FBF5D80093BBEE /* SKButton.swift */,
 				EB713C722727CC22002557DA /* Stack.swift */,
+				EBDDD8FD2731F13900F5EB53 /* GameLevel.swift */,
+				EBDDD8FF27324FA400F5EB53 /* ImagePickerCollectionViewCell.swift */,
+				EBDDD9012733230900F5EB53 /* GameCharacter.swift */,
+				EBDDD90327334DD500F5EB53 /* Queue.swift */,
 			);
 			path = DataStructures;
 			sourceTree = "<group>";
@@ -126,16 +141,16 @@
 				EB713C712727CBDF002557DA /* DataStructures */,
 				EB739BFB2729F729007B4B44 /* MenuViewController.swift */,
 				EB739BFD272A2F15007B4B44 /* ScoreViewController.swift */,
-				EB8113B426F693D800D73573 /* AppDelegate.swift */,
-				EB8113B626F693D800D73573 /* GameScene.sks */,
-				EB8113B826F693D800D73573 /* Actions.sks */,
 				EB8113BA26F693D800D73573 /* GameScene.swift */,
 				EB8113BC26F693D800D73573 /* GameViewController.swift */,
+				EB8113B426F693D800D73573 /* AppDelegate.swift */,
+				EBC11DBD273503C2005C62A1 /* SnowBackground.sks */,
+				EB8113B626F693D800D73573 /* GameScene.sks */,
+				EB8113B826F693D800D73573 /* Actions.sks */,
 				EB8113BE26F693D800D73573 /* Main.storyboard */,
+				EBD275A726F819A60093323B /* LaunchScreen.storyboard */,
 				EB8113C126F693DB00D73573 /* Assets.xcassets */,
 				EB8113C326F693DB00D73573 /* Info.plist */,
-				EBD275A726F819A60093323B /* LaunchScreen.storyboard */,
-				EBE396FF26FBF5D80093BBEE /* SKButton.swift */,
 			);
 			path = "Extremest Sudoku";
 			sourceTree = "<group>";
@@ -270,6 +285,7 @@
 			files = (
 				EB8113C026F693D800D73573 /* Main.storyboard in Resources */,
 				EB8113B726F693D800D73573 /* GameScene.sks in Resources */,
+				EBC11DBE273503C2005C62A1 /* SnowBackground.sks in Resources */,
 				EB8113C226F693DB00D73573 /* Assets.xcassets in Resources */,
 				EBD275A826F819A60093323B /* LaunchScreen.storyboard in Resources */,
 				EB8113B926F693D800D73573 /* Actions.sks in Resources */,
@@ -300,8 +316,12 @@
 				EB739BFE272A2F15007B4B44 /* ScoreViewController.swift in Sources */,
 				EB8113BB26F693D800D73573 /* GameScene.swift in Sources */,
 				EB739BFC2729F729007B4B44 /* MenuViewController.swift in Sources */,
+				EBDDD90427334DD500F5EB53 /* Queue.swift in Sources */,
 				EB713C732727CC22002557DA /* Stack.swift in Sources */,
+				EBDDD8FE2731F13900F5EB53 /* GameLevel.swift in Sources */,
+				EBDDD9022733230900F5EB53 /* GameCharacter.swift in Sources */,
 				EB8113BD26F693D800D73573 /* GameViewController.swift in Sources */,
+				EBDDD90027324FA400F5EB53 /* ImagePickerCollectionViewCell.swift in Sources */,
 				EB8113B526F693D800D73573 /* AppDelegate.swift in Sources */,
 				EBE3970026FBF5D80093BBEE /* SKButton.swift in Sources */,
 			);

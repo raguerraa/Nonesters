@@ -19,13 +19,24 @@ struct Color{
     let color: UIColor
 }
 
+struct PhysicsCategory {
+    
+    static let weapon: UInt32 = 1
+    static let gameCharacter: UInt32 = 2
+}
 
 
 // TODO. lET'S IMPlemente the theme manager: when finishing the main function of the sudoku
 
 class GameScene: SKScene {
     
-    private var gameCharacter = SKSpriteNode(imageNamed: "Lee_Running_000")
+    private let DAMAGEPOINTS = 100
+    
+    var gameCharacterName = String()
+    var gameCharacter = GameCharacter(name: "Naruto")
+    var gameLevel = GameLevel()
+    
+    private var gameCharacterSprite = SKSpriteNode()
     private var gameCharacterFrames = [SKTexture]()
     
     // Declare a gameViewController property so that the GameScene has acces to it
@@ -77,17 +88,31 @@ class GameScene: SKScene {
     private var timerButton = SKButton()
     private var timer = Timer()
     // The time user has to complete the sudoku in seconds
-    var countDown = 3600
-    private var isTimerCounting = false
+    var countDown = 0
+    var countUp =  1
+    private var hasGeneratedSudoku = false
+    
+    var message = SKLabelNode()
+    
+    private let sufferActions = [String]()
+    private let commonSufferActions = [ "Skeleton_Running"]
+    
+    private var sufferActionsQueue = Queue<String>()
+    private var attacks = Stack<Int>()
+    
     
     override func sceneDidLoad(){
         print("scene did load")
+ 
     }
 
     override func didMove(to view: SKView) {
+        
+        gameCharacter.changeName(name: gameCharacterName)
+        physicsWorld.contactDelegate = self
+        addChild(SKEmitterNode(fileNamed: "SnowBackground")!)
+        
         print("scene did move")
-        
-        
         //(theSudokuPuzzle, theSolution) = generate9By9SudokuByBacktracking()
         //theSudokuPuzzle = stringSudokuToDoubleArraySudoku(size: 9, sudoku: seedno)
         //theSolution = stringSudokuToDoubleArraySudoku(size: 9, sudoku: seed)
@@ -99,31 +124,145 @@ class GameScene: SKScene {
         // Let the top left corner cell be selected
         boardCells[0][0].state = .Highlighted
         selectedCell = boardCells[0][0]
+        animateGameCharacterIdle()
+        //loadActions()
+        //loadAttacks()
+        countDown = gameLevel.getTimeInSeconds()
+        loadActions()
+        attacks = loadAttackTimes(totalTimeInSeconds: countDown)
+     
+    }
+    // This method load the actions queue of all the actions the game character will suffer.
+    func loadActions(){
         
+        // First load the personal actions the game character can perfom
+        for action in sufferActions{
+            sufferActionsQueue.push(gameCharacter.getName() + "_" + action)
+        }
         
-
+        // Now laod all the common actions the game character will suffer
+        for action in commonSufferActions {
+            sufferActionsQueue.push(action)
+        }
     }
     
+    func loadAttackTimes(totalTimeInSeconds: Int) -> Stack<Int> {
+        
+        var attacks = Stack<Int>()
+        let MAXNUMBEROFATTACKS = 7
+        
+        // If there is only one second to attack, then it's preferable not to attack
+        if totalTimeInSeconds < 2{
+            return attacks
+        }
+        
+        // Let's determine how many attacks there might be. This isn't the actual number of attack
+        // times since there might be duplicates when randomly choosing time attacks.
+        let numberOfAttacks = Int.random(in: 5..<MAXNUMBEROFATTACKS)
 
-    func viewDidAppear(){
-        (theSudokuPuzzle, theSolution) = generate9By9SudokuByBacktracking()
-        print("scene did apear")
+        var randomAttackTimes = [Int]()
+        for _ in 0..<numberOfAttacks{
+            
+            let randomAttackTime = Int.random(in: 1..<totalTimeInSeconds)
+            
+            print(randomAttackTime)
+            randomAttackTimes.append(randomAttackTime)
+        }
+        
+        // Remove duplicate attack times. This array holds the actual attack times.
+        var uniqueRandomAttackTimes = Array(Set(randomAttackTimes))
+        
+        
+        uniqueRandomAttackTimes.sort()
+        
+        for times in uniqueRandomAttackTimes{
+            attacks.push(times)
+        }
+        
+        print(attacks)
+        return attacks
+        
+    }
+    func stopTime(){
+        if timer.isValid {
+            timer.invalidate()
+        }
     }
     
     func initiateGame(){
         
-        startTimer()
+        startTimerUp()
+        DispatchQueue.global().async {
+            (self.theSudokuPuzzle, self.theSolution) = self.generate9By9SudokuByBacktracking()
+            DispatchQueue.main.async { [weak self] in
+                
+                self?.hasGeneratedSudoku = true
+            }
+        }
+    }
+    
+    func loadSudokuIntoTheGrid(sudoku: [[String]]){
         
-        animateGameCharacter()
-        
-        animateBackground()
+        for y in 0..<sudoku.count{
+            for x in 0..<sudoku[0].count{
+                
+                if sudoku[y][x] != BLACKCOLORSYMBOL.name {
+                    boardCells[y][x].changeFontColor(color: .black)
+                    boardCells[y][x].changeLabel(text: sudoku[y][x] )
+                    
+                }
+            }
+        }
     }
 
+    
+    func startTimerUp(){
+        timer = Timer.scheduledTimer(timeInterval: 1,
+                                     target: self,
+                                     selector: #selector(timerCounterUp),
+                                     userInfo: nil,
+                                     repeats: true)
+        timer.tolerance = 0.2
+    }
+    @objc func timerCounterUp(){
+        
+        if hasGeneratedSudoku && countUp > 4{
+            timer.invalidate()
+            message.isHidden = true
+            message.zPosition = -1
+            
+            loadSudokuIntoTheGrid(sudoku: theSudokuPuzzle)
+            
+            startTimerDown()
+            animateBackground()
+            animateGameCharacterRunning()
+            
+            
+            return
+        }
+        var timeToDisplay = "Go!"
+        if countUp <= 3 {
+            timeToDisplay = String(countUp%60)
+        }
+
+        message.text = timeToDisplay
+        countUp = countUp + 1
+    }
     
     func animateBackground(){
  
         animateBackgroundElement(element: "mountain1_0", elementTwin: "mountain1_1", duration: 2)
         animateBackgroundElement(element: "mountain2_0", elementTwin: "mountain2_1", duration: 15)
+    }
+    func stopBackGroundAnimation(){
+        let backgroundMountain = childNode(withName: "mountain2_0") as? SKSpriteNode
+        let backgroundTwinMountain = childNode(withName: "mountain2_1") as? SKSpriteNode
+        let foregroundMountain = childNode(withName: "mountain1_0") as? SKSpriteNode
+        let foregroundTwinMountain = childNode(withName: "mountain1_1") as? SKSpriteNode
+        backgroundMountain?.removeAllActions()
+        backgroundTwinMountain?.removeAllActions()
+        foregroundMountain?.removeAllActions()
+        foregroundTwinMountain?.removeAllActions()
     }
     
     func animateBackgroundElement(element: String, elementTwin: String, duration: TimeInterval){
@@ -151,15 +290,73 @@ class GameScene: SKScene {
     func configureCharacter(){
         
         // TODO: Assign game character
-        gameCharacter.position  = CGPoint(x: 0, y: -(self.size.height)/2.0 + 110)
-        gameCharacter.size = CGSize(width: 150, height: 150)
-        self.addChild(gameCharacter)
+        gameCharacterSprite = SKSpriteNode(imageNamed: gameCharacter.getName() + "_Idle_000")
+        gameCharacterSprite.size = CGSize(width: 150, height: 150)
+        gameCharacterSprite.position.x = -self.size.width/2 + gameCharacterSprite.size.width/2
+        gameCharacterSprite.position.y = -(self.size.height)/2.0 + 110
+        
+        gameCharacterSprite.zPosition = 0
+        
+        // Add its physics
+        let physicsRectangle = CGSize(width: gameCharacterSprite.size.width - 100,
+                                      height: gameCharacterSprite.size.height - 100)
+        gameCharacterSprite.physicsBody = SKPhysicsBody(rectangleOf: physicsRectangle)
+        gameCharacterSprite.physicsBody?.affectedByGravity = false
+        gameCharacterSprite.physicsBody?.categoryBitMask = PhysicsCategory.gameCharacter
+        gameCharacterSprite.physicsBody?.contactTestBitMask = PhysicsCategory.weapon
+        gameCharacterSprite.physicsBody?.isDynamic = false
+        
+        self.addChild(gameCharacterSprite)
         
     }
-    
-    func animateGameCharacter(){
+    func animateGameCharacterIdle(){
+        animateLoopGameCharacter(characterName: gameCharacter.getName(),
+                             characterAction: "Idle",
+                             timePerFrame: 0.05)
+    }
+    func animateGameCharacterRunning(){
         
-        let textureAtlas = SKTextureAtlas(named: "Lee_Running")
+        animateLoopGameCharacter(characterName: gameCharacter.getName(),
+                             characterAction: "Running",
+                             timePerFrame: 0.02)
+    }
+    
+    func animateGameCharacterDying(){
+        animateOnceGameCharacter(characterName: gameCharacter.getName(),
+                                 characterAction: "Dying",
+                                 timePerFrame: 0.09,
+                                 completion: {})
+    }
+    
+    func animateGameCharacterHurt(completion: @escaping ()->Void){
+        animateOnceGameCharacter(characterName: gameCharacter.getName(),
+                                 characterAction: "Hurt",
+                                 timePerFrame: 0.06,
+                                 completion: completion)
+    }
+    
+    func animateLoopGameCharacter(characterName: String, characterAction: String,
+                              timePerFrame: TimeInterval){
+        gameCharacterSprite.removeAllActions()
+        let textureAtlas = SKTextureAtlas(named: characterName + "_" + characterAction)
+        
+        
+        for i in 0..<textureAtlas.textureNames.count {
+            let numberfile = String(format: "%02d", i)
+            gameCharacterFrames.append(
+                textureAtlas.textureNamed(characterName + "_" + characterAction + "_0" + numberfile))
+            
+        }
+        
+        // Run the frames
+        gameCharacterSprite.run(SKAction.repeatForever(SKAction.animate(with: gameCharacterFrames,
+                                                                  timePerFrame: timePerFrame)))
+        gameCharacterFrames = [SKTexture]()
+    }
+    
+    func animateGameCharacter(sufferAction: String, timePerFrame: TimeInterval){
+        
+        let textureAtlas = SKTextureAtlas(named: sufferAction)
         for name in textureAtlas.textureNames {
             
             gameCharacterFrames.append(textureAtlas.textureNamed(name))
@@ -167,29 +364,82 @@ class GameScene: SKScene {
         }
         
         // Run the frames
-        gameCharacter.run(SKAction.repeatForever(SKAction.animate(with: gameCharacterFrames,
-                                                                  timePerFrame: 0.04)))
+        gameCharacterSprite.run(SKAction.repeatForever(SKAction.animate(with: gameCharacterFrames,
+                                                                  timePerFrame: timePerFrame)))
+        gameCharacterFrames = [SKTexture]()
     }
     
-    func startTimer(){
+    
+    func animateOnceGameCharacter(characterName: String, characterAction: String,
+                                 timePerFrame: TimeInterval, completion: @escaping () -> Void){
+        gameCharacterSprite.removeAllActions()
+        let textureAtlas = SKTextureAtlas(named: characterName + "_" + characterAction)
+        
+        
+        for i in 0..<textureAtlas.textureNames.count {
+            let numberfile = String(format: "%02d", i)
+            gameCharacterFrames.append(
+                textureAtlas.textureNamed(characterName + "_" + characterAction + "_0" + numberfile))
+            
+        }
+        
+        // Run the frames
+        gameCharacterSprite.run(SKAction.animate(with: gameCharacterFrames, timePerFrame: timePerFrame),
+                          completion: completion)
+        gameCharacterFrames = [SKTexture]()
+    }
+    
+    func startTimerDown(){
         timer = Timer.scheduledTimer(timeInterval: 1,
                                      target: self,
-                                     selector: #selector(timerCounter),
+                                     selector: #selector(timerCounterDown),
                                      userInfo: nil,
                                      repeats: true)
         timer.tolerance = 0.2
     }
-    @objc func timerCounter(){
+    
+    @objc func timerCounterDown(){
         
         countDown = countDown - 1
         if countDown < 0 {
             timer.invalidate()
             return
         }
+        
+        
+        let attackTime = attacks.peek()
+        
+        //print("CountDown: ", countDown)
+        
+        if let attackTime = attackTime {
+            // If it is time to attack then attack
+            if attackTime == countDown {
+                _ =  attacks.pop()
+                throwWeapon()
+            }
+        }
+        /*
+        let attackTime = attacks.peek()
+        
+        print("CountDown: ", countDown)
+        
+        if let attackTime = attackTime {
+            if attackTime == countDown {
+                _ =  attacks.pop()
+                print("attackTime: ", attackTime )
+                let sufferAction = sufferActionsQueue.dequeue()
+                
+                if let sufferAction = sufferAction {
+                    animateGameCharacter(sufferAction: sufferAction, timePerFrame: 0.04)
+                }
+            }
+        }*/
+      
+        
         let timeToDisplay = secondsToHoursMinutesSeconds(seconds: countDown)
         timerButton.changeLabel(text: timeToDisplay)
     }
-    
+
     func secondsToHoursMinutesSeconds(seconds: Int) -> String{
         
         let _ = seconds / 3600
@@ -201,6 +451,47 @@ class GameScene: SKScene {
         return timeText
     }
     
+    func throwWeapon(){
+        
+        let weapon = createWeapon()
+        
+        let moveToYAction = SKAction.moveTo(x: -self.size.width/2.0 - weapon.size.width, duration:1)
+        
+        let reachedDestinationAction = SKAction.removeFromParent()
+        
+        weapon.run(SKAction.sequence([moveToYAction, reachedDestinationAction]))
+        
+        let rotate = SKAction.rotate(byAngle: 15, duration: 1)
+        let repeatRotation = SKAction.repeatForever(rotate)
+        weapon.run(repeatRotation)
+        
+    }
+    
+    func createWeapon()-> SKSpriteNode{
+        
+        let weapon = SKSpriteNode(imageNamed: "Shuriken")
+        
+        // Since we want the weapon to try to hit the game character we need to create the weapon
+        // around the y-coordinate of the game character
+        
+        let yCoordintateToHit = gameCharacterSprite.position.y
+        
+        weapon.position.y = yCoordintateToHit
+        // the weapon is going to be position to the right side of the screen
+        weapon.position.x = self.size.width/2.0
+        weapon.zPosition = 1
+        
+        
+        // Let's add it physics
+        weapon.physicsBody = SKPhysicsBody(circleOfRadius: weapon.size.width/2.0 - 20)
+        weapon.physicsBody?.categoryBitMask = PhysicsCategory.weapon
+        weapon.physicsBody?.contactTestBitMask = PhysicsCategory.gameCharacter
+        weapon.physicsBody?.affectedByGravity = false
+        weapon.physicsBody?.isDynamic = true
+        
+        addChild(weapon)
+        return weapon
+    }
     
     func configureTopBarButtons() {
         
@@ -239,6 +530,7 @@ class GameScene: SKScene {
             
             // We need a monospace font, so that the displayed time doesn't look like moving
             timerButton.changeFont(fontName: "Courier-Bold")
+            countDown = gameLevel.getTimeInSeconds()
             timerButton.changeLabel(text: secondsToHoursMinutesSeconds(seconds: countDown))
             timerButton.changeFontSize(fontSize: topBarFontSize)
             timerContainer.addChild(timerButton)
@@ -263,6 +555,8 @@ class GameScene: SKScene {
     }
     
     func exitGame(button: SKButton){
+        
+        stopTime()
         viewController?.dismiss(animated: true, completion: nil)
     }
     
@@ -608,8 +902,10 @@ class GameScene: SKScene {
                     }else{
                         cell.changeFontColor(color: .white)
                     }*/
+                    cell.changeFontColor(color: .white)
                     cell.changeLabel(text: "")
                     cell.state = .Active
+                    cell.zPosition = 1
    
                     gameBoard.addChild(cell)
                     shiftDistanceX = shiftDistanceX + separation + sideLength
@@ -625,28 +921,29 @@ class GameScene: SKScene {
             
             // TODO create my own alert message window for the game
             let messageBox = SKSpriteNode()
-            messageBox.color = .green
+            //messageBox.color = .green
             messageBox.position = .zero
             messageBox.size = CGSize(width: gameBoard.size.width - 2*sideLength, height: gameBoard.size.height - 4*sideLength)
             
             // Let's add the message label
-            let message = SKLabelNode()
+            message = SKLabelNode()
             message.fontColor = .white
+            message.fontName = "PingFangHK-Semibold"
             
-            
-            message.lineBreakMode = .byClipping
      
-            message.text = "Fill all Empty Cells"
+            message.text = "0"
             message.position = .zero
+            message.zPosition = 2
           
-            message.fontSize = 30
+            message.fontSize = 100
             message.horizontalAlignmentMode = .center
+            message.verticalAlignmentMode = .center
             
-            gameBoard.addChild(messageBox)
-            messageBox.addChild(message)
+            gameBoard.addChild(message)
+            //messageBox.addChild(message)
             
             messageBox.zPosition = 1
-            messageBox.isHidden = true
+            messageBox.isHidden = false
             
         }
     }
@@ -1145,11 +1442,41 @@ class GameScene: SKScene {
         for t in touches { self.touchUp(atPoint: t.location(in: self)) }
     }
     
+   */
+    
+    func animateSmokeCollition(){
+        
+
+        let smoke = SKSpriteNode(imageNamed: "Smoke_000")
+        
+        smoke.position = gameCharacterSprite.position
+        smoke.zPosition = 2
+        smoke.size = gameCharacterSprite.size
+        
+        addChild(smoke)
+        var framesSmoke = [SKTexture]()
+        
+        let textureAtlas = SKTextureAtlas(named: "Smoke")
+        for i in 0..<textureAtlas.textureNames.count {
+            let numberfile = String(format: "%02d", i)
+            framesSmoke.append(textureAtlas.textureNamed("Smoke_0" + numberfile))
+            
+        }
+        
+        // Run the frames
+        
+        let endAction = SKAction.removeFromParent()
+        smoke.run(SKAction.sequence ([SKAction.animate(with: framesSmoke,
+                                                       timePerFrame: 0.05), endAction]))
+        
+    }
+    
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+       
     }
- */
+ 
 }
 extension String{
     
@@ -1169,5 +1496,48 @@ extension UIImage {
         guard let colored = UIGraphicsGetImageFromCurrentImageContext() else { return self }
         UIGraphicsEndImageContext()
         return colored
+    }
+}
+
+extension GameScene: SKPhysicsContactDelegate {
+    
+
+    func didBegin(_ contact: SKPhysicsContact) {
+        
+        let bodyA = contact.bodyA
+        let bodyB = contact.bodyB
+        
+        gameCharacter.hitBy(points: DAMAGEPOINTS)
+        animateSmokeCollition()
+        
+        
+        if gameCharacter.isDead() {
+            
+            stopBackGroundAnimation()
+            animateGameCharacterHurt(completion: animateGameCharacterDying)
+            stopTime()
+            
+            // Go to Score View controller
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {[weak self] in
+                self?.viewController?.congratulateUser(correct: false)
+            })
+    
+        }else{
+            animateGameCharacterHurt(completion: animateGameCharacterRunning)
+        }
+
+        
+        // When a collition exists delete the weapon
+        if bodyA.categoryBitMask == PhysicsCategory.weapon &&
+            bodyB.categoryBitMask == PhysicsCategory.gameCharacter{
+            //animateCollition()
+            bodyA.node?.removeFromParent()
+            
+        }else if  bodyB.categoryBitMask == PhysicsCategory.weapon &&
+                    bodyA.categoryBitMask == PhysicsCategory.gameCharacter{
+            //animateCollition()
+            bodyB.node?.removeFromParent()
+        }
+        
     }
 }
