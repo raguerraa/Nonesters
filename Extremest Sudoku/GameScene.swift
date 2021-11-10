@@ -64,6 +64,8 @@ class GameScene: SKScene {
     private let BLACKCOLORSYMBOL = Color(name: "0", color: .black)
     private let EMPTYCELLCONTENT = ""
     private let BORDERWIDTH: CGFloat = 1.0
+    private let YLEVELGAMEPOSITION: CGFloat = -275
+    private var isJumping = false
     
     private var isUserFirstUndo = true
     
@@ -99,6 +101,7 @@ class GameScene: SKScene {
     
     private var sufferActionsQueue = Queue<String>()
     private var attacks = Stack<Int>()
+    private var isGameOn = false
     
     
     override func sceneDidLoad(){
@@ -293,7 +296,7 @@ class GameScene: SKScene {
         gameCharacterSprite = SKSpriteNode(imageNamed: gameCharacter.getName() + "_Idle_000")
         gameCharacterSprite.size = CGSize(width: 150, height: 150)
         gameCharacterSprite.position.x = -self.size.width/2 + gameCharacterSprite.size.width/2
-        gameCharacterSprite.position.y = -(self.size.height)/2.0 + 110
+        gameCharacterSprite.position.y = YLEVELGAMEPOSITION
         
         gameCharacterSprite.zPosition = 0
         
@@ -337,7 +340,7 @@ class GameScene: SKScene {
     
     func animateLoopGameCharacter(characterName: String, characterAction: String,
                               timePerFrame: TimeInterval){
-        gameCharacterSprite.removeAllActions()
+        //gameCharacterSprite.removeAllActions()
         let textureAtlas = SKTextureAtlas(named: characterName + "_" + characterAction)
         
         
@@ -372,7 +375,7 @@ class GameScene: SKScene {
     
     func animateOnceGameCharacter(characterName: String, characterAction: String,
                                  timePerFrame: TimeInterval, completion: @escaping () -> Void){
-        gameCharacterSprite.removeAllActions()
+       // gameCharacterSprite.removeAllActions()
         let textureAtlas = SKTextureAtlas(named: characterName + "_" + characterAction)
         
         
@@ -474,7 +477,7 @@ class GameScene: SKScene {
         // Since we want the weapon to try to hit the game character we need to create the weapon
         // around the y-coordinate of the game character
         
-        let yCoordintateToHit = gameCharacterSprite.position.y
+        let yCoordintateToHit = YLEVELGAMEPOSITION//gameCharacterSprite.position.y
         
         weapon.position.y = yCoordintateToHit
         // the weapon is going to be position to the right side of the screen
@@ -1368,9 +1371,42 @@ class GameScene: SKScene {
         
         print("=======================>")
     }
+    
+    func performJump(completion:@escaping ()-> Void){
+        //gameCharacterSprite.removeAllActions()
+        let height: CGFloat = 60
+        let goUp = SKAction.moveBy(x: 0, y: height, duration: 0.4)
+        let goDown =  SKAction.moveBy(x: 0, y: -height, duration: 0.4)
+        
+        
+        let jumpAction = SKAction.sequence([goUp, goDown])
+        
+        gameCharacterSprite.run(jumpAction, completion: {[weak self] in
+            self?.isJumping = false
+            completion()
+            NSLog("IT PERFORMED JUMP")
+            
+        })
+    }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+        if !gameCharacter.isDead(){
+            isJumping = true
+            
+            performJump(completion: {})
+        }
+        
+        /*
+        for touch in touches {
+            let location = touch.location(in: self)
+            let touchedNode = atPoint(location)
+            if touchedNode.name == "road" {
+                print("is being toucheddd")
+                touchedNode.alpha = 0.7
+            }
+            print("here")
+        }*/
         /*
         let rotate = SKAction.rotate(byAngle: 1, duration: 5)
         let repeatRotation = SKAction.repeatForever(rotate)
@@ -1514,7 +1550,10 @@ extension GameScene: SKPhysicsContactDelegate {
         if gameCharacter.isDead() {
             
             stopBackGroundAnimation()
-            animateGameCharacterHurt(completion: animateGameCharacterDying)
+            
+            animateGameCharacterHurt(completion: {
+                self.gameCharacterSprite.removeAllActions()
+                self.animateGameCharacterDying()})
             stopTime()
             
             // Go to Score View controller
