@@ -1,2 +1,3 @@
-# ExtremestSudoku
-This iOs game is a sudoku that generate the hardest puzzles
+# Leaf Sudoku
+
+This is an iOs game where you have to solve Sudoku puzzles while you keep your avatar alive.
