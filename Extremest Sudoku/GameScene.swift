@@ -1,10 +1,3 @@
-//
-//
-//
-//
-//
-
-
 import SpriteKit
 import GameplayKit
 
@@ -26,18 +19,16 @@ struct PhysicsCategory {
 }
 
 
-// TODO. lET'S IMPlemente the theme manager: when finishing the main function of the sudoku
-
 class GameScene: SKScene {
     
+    // How much damage does receives the game character for each hit.
     private let DAMAGEPOINTS = 100
     
-    var gameCharacterName = String()
-    var gameCharacter = GameCharacter(name: "Naruto")
+    var gameCharacterName:String?
     var gameLevel = GameLevel()
     
-    private var gameCharacterSprite = SKSpriteNode()
-    private var gameCharacterFrames = [SKTexture]()
+    // Default game character is Nartuo if no gameCharacterName is provided
+    private var gameCharacter = GameCharacter(name: "Naruto")
     
     // Declare a gameViewController property so that the GameScene has acces to it
     weak var viewController : GameViewController?
@@ -53,55 +44,54 @@ class GameScene: SKScene {
     
     // Since in sudoku the symbols used can be anything, colors abstracts the idea of symbols
     // and the black color reresents like in physics the absense of light
-    //private let COLORS = ["1","2","3","4","5","6","7","8","9"]
     private let COLORSYMBOLS = [Color(name: "1", color: .systemPink), Color(name: "2", color: .red)
                                 , Color(name: "3", color: .green), Color(name: "4", color: .magenta)
                                 , Color(name: "5", color: .systemIndigo), Color(name: "6", color: .lightGray)
                                 , Color(name: "7", color: .blue), Color(name: "8", color: .orange)
                                 , Color(name: "9", color: .systemPink)]
     
-    //private let blackColor = "0"
+ 
     private let BLACKCOLORSYMBOL = Color(name: "0", color: .black)
     private let EMPTYCELLCONTENT = ""
     private let BORDERWIDTH: CGFloat = 1.0
     private let YLEVELGAMEPOSITION: CGFloat = -275
+    
+    // Flag that tells if the user is jumping.
     private var isJumping = false
     
+    // Flag that tells if it is the first undo or not.
     private var isUserFirstUndo = true
     
-    private var solutions = [[[String]]]()
+    // Flag that tells if the user is playing
+    private var hasGameSarted = false
     
-    private var theSolution = [[String]]()
-    private var theSudokuPuzzle = [[String]]()
+    // The stack of all the moves the user have made. This is used when undoing.
     private var userMoves = Stack<(SKButton, String)>()
     private var cellsWithSameColor = [(SKButton, UIColor)]()
     
-    
-    private var seed = "827154396965327148341689752593468271472513689618972435786235914154796823239841567"
-    private var seedno = "000000000965327148341689752503468271472013689618972435786235914154706823239840567"
+    private var theSolution = [[String]]()
+    private var theSudokuPuzzle = [[String]]()
     
     private let separation:CGFloat = 1
     private let darkBoardColor: UIColor = UIColor(red: 0.0/255, green: 94.0/255, blue: 255.0/255, alpha: 1)
-    // TODO: MAYBE green 230 better
     private let softBoardColor: UIColor = UIColor(red: 0.0/255, green: 215.0/255, blue: 230.0/255, alpha: 1)
-    private let primaryThemeColor: UIColor = UIColor(red: 0.0/255, green: 94.0/255, blue: 255.0/255, alpha: 1)
-    private let secondaryThemeColor: UIColor = UIColor(red: 0.0/255, green: 230.0/255, blue: 230.0/255, alpha: 1)
+ 
     
+    // The button where the time will be displayed.
     private var timerButton = SKButton()
     private var timer = Timer()
-    // The time user has to complete the sudoku in seconds
-    var countDown = 0
-    var countUp =  1
+    
+    // The time limit the user has to complete the sudoku in seconds.
+    private var countDown = 0
+    // CountUp have to be 4 for the game to start.
+    private var countUp =  1
+    
     private var hasGeneratedSudoku = false
     
-    var message = SKLabelNode()
+    private var message = SKLabelNode()
     
-    private let sufferActions = [String]()
-    private let commonSufferActions = [ "Skeleton_Running"]
-    
-    private var sufferActionsQueue = Queue<String>()
+    // The attack times that tells when the tank will make its attacks.
     private var attacks = Stack<Int>()
-    private var isGameOn = false
     
     
     override func sceneDidLoad(){
@@ -111,45 +101,150 @@ class GameScene: SKScene {
 
     override func didMove(to view: SKView) {
         
-        gameCharacter.changeName(name: gameCharacterName)
         physicsWorld.contactDelegate = self
-        addChild(SKEmitterNode(fileNamed: "SnowBackground")!)
         
-        print("scene did move")
-        //(theSudokuPuzzle, theSolution) = generate9By9SudokuByBacktracking()
-        //theSudokuPuzzle = stringSudokuToDoubleArraySudoku(size: 9, sudoku: seedno)
-        //theSolution = stringSudokuToDoubleArraySudoku(size: 9, sudoku: seed)
+        // Configure the game board.
+        if let emiter = SKEmitterNode(fileNamed: "SnowBackground"){
+            addChild(emiter)
+        }
         configureTopBarButtons()
         configureGameBoard()
         configureNumberPad()
-        configureCharacter()
-      
-        // Let the top left corner cell be selected
+        // Let the top left corner cell be selected.
         boardCells[0][0].state = .Highlighted
         selectedCell = boardCells[0][0]
-        animateGameCharacterIdle()
-        //loadActions()
-        //loadAttacks()
-        countDown = gameLevel.getTimeInSeconds()
-        loadActions()
-        attacks = loadAttackTimes(totalTimeInSeconds: countDown)
-     
-    }
-    // This method load the actions queue of all the actions the game character will suffer.
-    func loadActions(){
+ 
         
-        // First load the personal actions the game character can perfom
-        for action in sufferActions{
-            sufferActionsQueue.push(gameCharacter.getName() + "_" + action)
+        // Configure Game Character.
+        if let gameCharacterName = gameCharacterName {
+            gameCharacter.changeName(name: gameCharacterName)
+        }
+        let gameCharacterSprite = gameCharacter.configureCharacter(x: size.width/2.0, y: YLEVELGAMEPOSITION)
+        addChild(gameCharacterSprite)
+        gameCharacter.animateGameCharacterIdle()
+        
+        // Configure the time the player will have and the attack times.
+        countDown = gameLevel.getTimeInSeconds()
+        attacks = loadAttackTimes(totalTimeInSeconds: countDown)
+  
+    }
+    
+    // When everthing is configured, this method is called and initiates the game.
+    func initiateGame(){
+        startTimerUp()
+        DispatchQueue.global().async {
+            let sudoku = Sudoku()
+            (self.theSudokuPuzzle, self.theSolution) = sudoku.generate9By9SudokuByBacktracking()
+            DispatchQueue.main.async { [weak self] in
+                
+                self?.hasGeneratedSudoku = true
+            }
+        }
+    }
+
+    // This sets up the timer while the user waits for the Sudoku puzzzle to be generated.
+    private func startTimerUp(){
+        timer = Timer.scheduledTimer(timeInterval: 1,
+                                     target: self,
+                                     selector: #selector(timerCounterUp),
+                                     userInfo: nil,
+                                     repeats: true)
+        timer.tolerance = 0.2
+    }
+    
+    // This controls the time before the Sudoku is generated and gives the green light if a Sudoku
+    // puzzle exists so that user can start playing.
+    @objc func timerCounterUp(){
+        
+        if hasGeneratedSudoku && countUp > 4{
+            
+            // The game has started.
+            
+            hasGameSarted = true
+            timer.invalidate()
+            message.isHidden = true
+            message.zPosition = -1
+            
+            loadSudokuIntoTheGrid(sudoku: theSudokuPuzzle)
+            
+            startTimerDown()
+            animateBackground()
+            gameCharacter.animateGameCharacterRunning()
+            return
+        }
+        var timeToDisplay = "Go!"
+        if countUp <= 3 {
+            timeToDisplay = String(countUp%60)
+        }
+
+        message.text = timeToDisplay
+        countUp = countUp + 1
+    }
+    
+    // Set up the timer down.
+    func startTimerDown(){
+        timer = Timer.scheduledTimer(timeInterval: 1,
+                                     target: self,
+                                     selector: #selector(timerCounterDown),
+                                     userInfo: nil,
+                                     repeats: true)
+        timer.tolerance = 0.2
+    }
+    
+    // This gives the user the time limit to solve the puzzle and also controls the attacks of the
+    // tank
+    @objc func timerCounterDown(){
+        
+        countDown = countDown - 1
+        if countDown < 0 {
+            timer.invalidate()
+            return
         }
         
-        // Now laod all the common actions the game character will suffer
-        for action in commonSufferActions {
-            sufferActionsQueue.push(action)
+        let attackTime = attacks.peek()
+        
+        if let attackTime = attackTime {
+            // If it is time to attack then attack
+            if attackTime == countDown {
+                _ =  attacks.pop()
+                let tank = Tank()
+                let weapon = tank.createWeapon(x: size.width/2.0, y: YLEVELGAMEPOSITION)
+                addChild(weapon)
+                tank.throwWeapon()
+            }
+        }
+
+        let timeToDisplay = secondsToHoursMinutesSeconds(seconds: countDown)
+        timerButton.changeLabel(text: timeToDisplay)
+    }
+    
+    // This stops the timer.
+    func stopTime(){
+        if timer.isValid {
+            timer.invalidate()
         }
     }
     
-    func loadAttackTimes(totalTimeInSeconds: Int) -> Stack<Int> {
+    // Converts the time given in seconds to a hour, minutes and seconds format for display.
+    func secondsToHoursMinutesSeconds(seconds: Int) -> String{
+        
+        let _ = seconds / 3600
+        let minutes = (seconds % 3600) / 60
+        let seconds = (seconds % 3600) % 60
+        
+        let timeText = String(format: "%02d:%02d", minutes, seconds)
+
+        return timeText
+    }
+    
+    // This exits the game board.
+    private func exitGame(button: SKButton){
+        stopTime()
+        viewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    // This loads all the attack times when the game character will get attacked.
+    private func loadAttackTimes(totalTimeInSeconds: Int) -> Stack<Int> {
         
         var attacks = Stack<Int>()
         let MAXNUMBEROFATTACKS = 7
@@ -184,27 +279,10 @@ class GameScene: SKScene {
         
         print(attacks)
         return attacks
-        
-    }
-    func stopTime(){
-        if timer.isValid {
-            timer.invalidate()
-        }
     }
     
-    func initiateGame(){
-        
-        startTimerUp()
-        DispatchQueue.global().async {
-            (self.theSudokuPuzzle, self.theSolution) = self.generate9By9SudokuByBacktracking()
-            DispatchQueue.main.async { [weak self] in
-                
-                self?.hasGeneratedSudoku = true
-            }
-        }
-    }
-    
-    func loadSudokuIntoTheGrid(sudoku: [[String]]){
+    // This loads the Sudoku puzzle into the game baord.
+    private func loadSudokuIntoTheGrid(sudoku: [[String]]){
         
         for y in 0..<sudoku.count{
             for x in 0..<sudoku[0].count{
@@ -217,487 +295,12 @@ class GameScene: SKScene {
             }
         }
     }
-
     
-    func startTimerUp(){
-        timer = Timer.scheduledTimer(timeInterval: 1,
-                                     target: self,
-                                     selector: #selector(timerCounterUp),
-                                     userInfo: nil,
-                                     repeats: true)
-        timer.tolerance = 0.2
-    }
-    @objc func timerCounterUp(){
-        
-        if hasGeneratedSudoku && countUp > 4{
-            timer.invalidate()
-            message.isHidden = true
-            message.zPosition = -1
-            
-            loadSudokuIntoTheGrid(sudoku: theSudokuPuzzle)
-            
-            startTimerDown()
-            animateBackground()
-            animateGameCharacterRunning()
-            
-            
-            return
-        }
-        var timeToDisplay = "Go!"
-        if countUp <= 3 {
-            timeToDisplay = String(countUp%60)
-        }
-
-        message.text = timeToDisplay
-        countUp = countUp + 1
-    }
-    
-    func animateBackground(){
- 
-        animateBackgroundElement(element: "mountain1_0", elementTwin: "mountain1_1", duration: 2)
-        animateBackgroundElement(element: "mountain2_0", elementTwin: "mountain2_1", duration: 15)
-    }
-    func stopBackGroundAnimation(){
-        let backgroundMountain = childNode(withName: "mountain2_0") as? SKSpriteNode
-        let backgroundTwinMountain = childNode(withName: "mountain2_1") as? SKSpriteNode
-        let foregroundMountain = childNode(withName: "mountain1_0") as? SKSpriteNode
-        let foregroundTwinMountain = childNode(withName: "mountain1_1") as? SKSpriteNode
-        backgroundMountain?.removeAllActions()
-        backgroundTwinMountain?.removeAllActions()
-        foregroundMountain?.removeAllActions()
-        foregroundTwinMountain?.removeAllActions()
-    }
-    
-    func animateBackgroundElement(element: String, elementTwin: String, duration: TimeInterval){
-        
-        let foreground = childNode(withName: element) as? SKSpriteNode
-        let foregroundTwin = childNode(withName: elementTwin) as? SKSpriteNode
-        
-        if let foreground = foreground{
-            if let foregroundTwin = foregroundTwin{
-                
-
-                let mountainWidth = foreground.size.width
-        
-                let moveLeft = SKAction.moveBy(x: -mountainWidth, y: 0, duration: duration)
-                let moveReset = SKAction.moveBy(x: mountainWidth, y: 0, duration: 0)
-                let moveLoop = SKAction.sequence([moveLeft,moveReset])
-                let moveForever = SKAction.repeatForever(moveLoop)
-                
-                foreground.run(moveForever)
-                foregroundTwin.run(moveForever)
-            }
-        }
-    }
-    
-    func configureCharacter(){
-        
-        // TODO: Assign game character
-        gameCharacterSprite = SKSpriteNode(imageNamed: gameCharacter.getName() + "_Idle_000")
-        gameCharacterSprite.size = CGSize(width: 150, height: 150)
-        gameCharacterSprite.position.x = -self.size.width/2 + gameCharacterSprite.size.width/2
-        gameCharacterSprite.position.y = YLEVELGAMEPOSITION
-        
-        gameCharacterSprite.zPosition = 0
-        
-        // Add its physics
-        let physicsRectangle = CGSize(width: gameCharacterSprite.size.width - 100,
-                                      height: gameCharacterSprite.size.height - 100)
-        gameCharacterSprite.physicsBody = SKPhysicsBody(rectangleOf: physicsRectangle)
-        gameCharacterSprite.physicsBody?.affectedByGravity = false
-        gameCharacterSprite.physicsBody?.categoryBitMask = PhysicsCategory.gameCharacter
-        gameCharacterSprite.physicsBody?.contactTestBitMask = PhysicsCategory.weapon
-        gameCharacterSprite.physicsBody?.isDynamic = false
-        
-        self.addChild(gameCharacterSprite)
-        
-    }
-    func animateGameCharacterIdle(){
-        animateLoopGameCharacter(characterName: gameCharacter.getName(),
-                             characterAction: "Idle",
-                             timePerFrame: 0.05)
-    }
-    func animateGameCharacterRunning(){
-        
-        animateLoopGameCharacter(characterName: gameCharacter.getName(),
-                             characterAction: "Running",
-                             timePerFrame: 0.02)
-    }
-    
-    func animateGameCharacterDying(){
-        animateOnceGameCharacter(characterName: gameCharacter.getName(),
-                                 characterAction: "Dying",
-                                 timePerFrame: 0.09,
-                                 completion: {})
-    }
-    
-    func animateGameCharacterHurt(completion: @escaping ()->Void){
-        animateOnceGameCharacter(characterName: gameCharacter.getName(),
-                                 characterAction: "Hurt",
-                                 timePerFrame: 0.06,
-                                 completion: completion)
-    }
-    
-    func animateLoopGameCharacter(characterName: String, characterAction: String,
-                              timePerFrame: TimeInterval){
-        //gameCharacterSprite.removeAllActions()
-        let textureAtlas = SKTextureAtlas(named: characterName + "_" + characterAction)
-        
-        
-        for i in 0..<textureAtlas.textureNames.count {
-            let numberfile = String(format: "%02d", i)
-            gameCharacterFrames.append(
-                textureAtlas.textureNamed(characterName + "_" + characterAction + "_0" + numberfile))
-            
-        }
-        
-        // Run the frames
-        gameCharacterSprite.run(SKAction.repeatForever(SKAction.animate(with: gameCharacterFrames,
-                                                                  timePerFrame: timePerFrame)))
-        gameCharacterFrames = [SKTexture]()
-    }
-    
-    func animateGameCharacter(sufferAction: String, timePerFrame: TimeInterval){
-        
-        let textureAtlas = SKTextureAtlas(named: sufferAction)
-        for name in textureAtlas.textureNames {
-            
-            gameCharacterFrames.append(textureAtlas.textureNamed(name))
-            
-        }
-        
-        // Run the frames
-        gameCharacterSprite.run(SKAction.repeatForever(SKAction.animate(with: gameCharacterFrames,
-                                                                  timePerFrame: timePerFrame)))
-        gameCharacterFrames = [SKTexture]()
-    }
-    
-    
-    func animateOnceGameCharacter(characterName: String, characterAction: String,
-                                 timePerFrame: TimeInterval, completion: @escaping () -> Void){
-       // gameCharacterSprite.removeAllActions()
-        let textureAtlas = SKTextureAtlas(named: characterName + "_" + characterAction)
-        
-        
-        for i in 0..<textureAtlas.textureNames.count {
-            let numberfile = String(format: "%02d", i)
-            gameCharacterFrames.append(
-                textureAtlas.textureNamed(characterName + "_" + characterAction + "_0" + numberfile))
-            
-        }
-        
-        // Run the frames
-        gameCharacterSprite.run(SKAction.animate(with: gameCharacterFrames, timePerFrame: timePerFrame),
-                          completion: completion)
-        gameCharacterFrames = [SKTexture]()
-    }
-    
-    func startTimerDown(){
-        timer = Timer.scheduledTimer(timeInterval: 1,
-                                     target: self,
-                                     selector: #selector(timerCounterDown),
-                                     userInfo: nil,
-                                     repeats: true)
-        timer.tolerance = 0.2
-    }
-    
-    @objc func timerCounterDown(){
-        
-        countDown = countDown - 1
-        if countDown < 0 {
-            timer.invalidate()
-            return
-        }
-        
-        
-        let attackTime = attacks.peek()
-        
-        //print("CountDown: ", countDown)
-        
-        if let attackTime = attackTime {
-            // If it is time to attack then attack
-            if attackTime == countDown {
-                _ =  attacks.pop()
-                throwWeapon()
-            }
-        }
-        /*
-        let attackTime = attacks.peek()
-        
-        print("CountDown: ", countDown)
-        
-        if let attackTime = attackTime {
-            if attackTime == countDown {
-                _ =  attacks.pop()
-                print("attackTime: ", attackTime )
-                let sufferAction = sufferActionsQueue.dequeue()
-                
-                if let sufferAction = sufferAction {
-                    animateGameCharacter(sufferAction: sufferAction, timePerFrame: 0.04)
-                }
-            }
-        }*/
-      
-        
-        let timeToDisplay = secondsToHoursMinutesSeconds(seconds: countDown)
-        timerButton.changeLabel(text: timeToDisplay)
-    }
-
-    func secondsToHoursMinutesSeconds(seconds: Int) -> String{
-        
-        let _ = seconds / 3600
-        let minutes = (seconds % 3600) / 60
-        let seconds = (seconds % 3600) % 60
-        
-        let timeText = String(format: "%02d:%02d", minutes, seconds)
-
-        return timeText
-    }
-    
-    func throwWeapon(){
-        
-        let weapon = createWeapon()
-        
-        let moveToYAction = SKAction.moveTo(x: -self.size.width/2.0 - weapon.size.width, duration:1)
-        
-        let reachedDestinationAction = SKAction.removeFromParent()
-        
-        weapon.run(SKAction.sequence([moveToYAction, reachedDestinationAction]))
-        
-        let rotate = SKAction.rotate(byAngle: 15, duration: 1)
-        let repeatRotation = SKAction.repeatForever(rotate)
-        weapon.run(repeatRotation)
-        
-    }
-    
-    func createWeapon()-> SKSpriteNode{
-        
-        let weapon = SKSpriteNode(imageNamed: "Shuriken")
-        
-        // Since we want the weapon to try to hit the game character we need to create the weapon
-        // around the y-coordinate of the game character
-        
-        let yCoordintateToHit = YLEVELGAMEPOSITION//gameCharacterSprite.position.y
-        
-        weapon.position.y = yCoordintateToHit
-        // the weapon is going to be position to the right side of the screen
-        weapon.position.x = self.size.width/2.0
-        weapon.zPosition = 1
-        
-        
-        // Let's add it physics
-        weapon.physicsBody = SKPhysicsBody(circleOfRadius: weapon.size.width/2.0 - 20)
-        weapon.physicsBody?.categoryBitMask = PhysicsCategory.weapon
-        weapon.physicsBody?.contactTestBitMask = PhysicsCategory.gameCharacter
-        weapon.physicsBody?.affectedByGravity = false
-        weapon.physicsBody?.isDynamic = true
-        
-        addChild(weapon)
-        return weapon
-    }
-    
-    func configureTopBarButtons() {
-        
-        let topBarFont = "PingFangHK-Semibold"
-        let topBarFontSize:CGFloat = 15.0
-        
-        
-        let sizeTopContainers = CGSize(width: 80, height: 20)
-        // Configure exit button
-        let exitContainer = childNode(withName: "exitContainer") as? SKSpriteNode
-        if let exitContainer = exitContainer{
-            exitContainer.setScale(1)
-            exitContainer.size = sizeTopContainers
-            let exitButton = SKButton(color: self.backgroundColor,
-                                      size: CGSize( width: exitContainer.size.width -
-                                            2*BORDERWIDTH, height:
-                                            exitContainer.size.height - 2*BORDERWIDTH))
-            
-            exitButton.state = .Active
-            exitButton.changeFont(fontName: topBarFont)
-            exitButton.changeLabel(text: "quit")
-            exitButton.changeFontSize(fontSize: topBarFontSize)
-            exitButton.selectedHandler = exitGame
-            exitContainer.addChild(exitButton)
-        }
-        
-        // Configure timer label
-        let timerContainer = childNode(withName: "timerContainer") as? SKSpriteNode
-        if let timerContainer = timerContainer {
-            timerContainer.setScale(1)
-            timerContainer.size = sizeTopContainers
-            timerButton = SKButton(color: .systemPink,
-                                      size: CGSize( width: timerContainer.size.width -
-                                            2*BORDERWIDTH, height:
-                                            timerContainer.size.height - 2*BORDERWIDTH))
-            
-            // We need a monospace font, so that the displayed time doesn't look like moving
-            timerButton.changeFont(fontName: "Courier-Bold")
-            countDown = gameLevel.getTimeInSeconds()
-            timerButton.changeLabel(text: secondsToHoursMinutesSeconds(seconds: countDown))
-            timerButton.changeFontSize(fontSize: topBarFontSize)
-            timerContainer.addChild(timerButton)
-        }
-        
-        // Configure pencil
-        let pencilContainer = childNode(withName: "pencilContainer") as? SKSpriteNode
-        if let pencilContainer = pencilContainer {
-            pencilContainer.setScale(1)
-            pencilContainer.size = sizeTopContainers
-            let pencilButton = SKButton(color: .systemGreen,
-                                      size: CGSize( width: pencilContainer.size.width -
-                                            2*BORDERWIDTH, height:
-                                            pencilContainer.size.height - 2*BORDERWIDTH))
-            
-            pencilButton.changeFont(fontName: topBarFont)
-            pencilButton.changeLabel(text: "pencil")
-            pencilButton.changeFontSize(fontSize: 15)
-            pencilButton.state = .Active
-            pencilContainer.addChild(pencilButton)
-        }
-    }
-    
-    func exitGame(button: SKButton){
-        
-        stopTime()
-        viewController?.dismiss(animated: true, completion: nil)
-    }
-    
-    func configureNumberPad(){
-        if let gameBoard = gameBoard{
-            let padWidth = gameBoard.size.width
-            let padHeight = 2*(padWidth/5.0)
-            
-            numberPad = SKSpriteNode(color: self.backgroundColor, size: CGSize(width: padWidth,
-                                                                               height: padHeight))
-            
-            if let numberPad = numberPad{
-                
-                numberPad.position = CGPoint(x: 0, y: -120)
-                // TODO: This is adding the number pad node right the way
-                // try to see if it can be added later in the code with all the number pad cells
-                // This should be done when optimizing the app for speed
-                numberPad.name = "numberPad"
-                //numberPad.color = gameBoard.color
-                
-                self.addChild(numberPad)
-                
-                // Now, let's add all the numberic keys
-                
-                // calculate the square side length of each numeric key with the border
-                let sideLengthNumberKey  = (padWidth - 6*separation)/5.0
-                
-                // First half
-                var ycoordinatekeyPosition = separation/2.0 + sideLengthNumberKey/2.0
-                var xcoordinatekeyPosition = -(4*(sideLengthNumberKey/2.0) + 2*separation)
-                let xCoordinateLengthShift = sideLengthNumberKey + separation
-                
-                for i in 1...5{
-                    // let's configure and position the keys
-                    let numericKey = SKButton(color: UIColor(red: 0, green: 0, blue: 88/255,
-                                            alpha: 1), size: CGSize(width: sideLengthNumberKey,
-                                            height: sideLengthNumberKey))
-                    numericKey.name = "key" + String(i)
-                    numericKey.position = CGPoint(x: xcoordinatekeyPosition,
-                                                  y: ycoordinatekeyPosition)
-                    numericKey.state = .Active
-                    numericKey.changeLabel(text: String(i))
-                    numericKey.selectedHandler = changeNumber
-                    numberPad.addChild(numericKey)
-                    numberPadKeys.append(numericKey)
-                    xcoordinatekeyPosition = xcoordinatekeyPosition + xCoordinateLengthShift
-                }
-                ycoordinatekeyPosition = -ycoordinatekeyPosition
-                xcoordinatekeyPosition = -(3*(sideLengthNumberKey/2.0) + 2*separation)
-                
-                // Second Half
-                for i in 1...4{
-                    // let's configure and position the keys
-                    let numericKey = SKButton(color: UIColor(red: 0, green: 0, blue: 50/255,
-                                              alpha: 1), size: CGSize(width: sideLengthNumberKey,
-                                              height: sideLengthNumberKey))
-                    numericKey.name = "key" + String(i + 5)
-                    numericKey.position = CGPoint(x: xcoordinatekeyPosition,
-                                                  y: ycoordinatekeyPosition)
-                    numericKey.state = .Active
-                    numericKey.changeLabel(text: String(i + 5))
-                    numericKey.selectedHandler = changeNumber
-                    numberPad.addChild(numericKey)
-                    numberPadKeys.append(numericKey)
-                    xcoordinatekeyPosition = xcoordinatekeyPosition + xCoordinateLengthShift
-                }
-                
-                xcoordinatekeyPosition = (2*sideLengthNumberKey +
-                                          (sideLengthNumberKey/2.0 - separation/2.0)/2.0 +
-                                            2*separation + separation/2.0)
-                
-                
-                var buttonConfiguration = UIImage.SymbolConfiguration(weight: .bold)
-                // configure Check button
-                
-                let checkButtonlength =  sideLengthNumberKey/2.0 - separation/2.0
-                
-                let containerCheckButton = SKSpriteNode(color: self.backgroundColor, size: CGSize(width:
-                                           checkButtonlength,
-                                           height: sideLengthNumberKey))
-                
-                containerCheckButton.position = CGPoint(x: xcoordinatekeyPosition, y: ycoordinatekeyPosition)
-                
-                var playImage = UIImage(systemName: "checkmark", withConfiguration: buttonConfiguration)
-                playImage = playImage?.withRenderingMode(.alwaysOriginal)
-                playImage = playImage?.withColor(.green)
-                var texture = SKTexture(image: playImage!)
-                checkButton = SKButton(texture: texture, color: .white, size: CGSize(width:
-                                           checkButtonlength - 8*separation,
-                                           height: checkButtonlength - 8*separation))
-                
-                containerCheckButton.addChild(checkButton)
-                
-                checkButton.name = "checkButton"
-                checkButton.position = .zero
-                checkButton.state = .Highlighted
-                checkButton.colorBlendFactor = 1
-                
-                
-                checkButton.selectedHandler = checkSudokuCorrectness
-                numberPad.addChild(containerCheckButton)
-                
-                
-                // configure undo button
-                
-                let undoButtonLength = sideLengthNumberKey/2.0 - separation - separation/2.0
-                xcoordinatekeyPosition = -xcoordinatekeyPosition - separation/2.0
-                
-                let undoContainer  = SKSpriteNode(color: self.backgroundColor, size: CGSize(width: undoButtonLength,
-                                    height: sideLengthNumberKey))
-                
-                undoContainer.position = CGPoint(x: xcoordinatekeyPosition, y: ycoordinatekeyPosition)
-                
-                buttonConfiguration = UIImage.SymbolConfiguration(weight: .light)
-                var image = UIImage(systemName: "arrow.uturn.backward", withConfiguration: buttonConfiguration)
-                image = image?.withRenderingMode(.alwaysOriginal)
-                image = image?.withColor(.white)
-                texture = SKTexture(image: image!)
-                
-                let undoButton = SKButton(texture: texture, color: .white, size: CGSize(width:
-                                        undoButtonLength - 4*separation, height:undoButtonLength - 4*separation))
-                
-                undoContainer.addChild(undoButton)
-                undoButton.colorBlendFactor = 1
-                undoButton.name = "undoButton"
-                undoButton.selectedHandler = undo
-                undoButton.state = .Active
-                numberPad.addChild(undoContainer)
-            }
-        }else{
-            print("Game Board has not been configure")
-        }
-    }
-    
-    // This is an assamption about how the user would like the undo work. the user doesn't care
+    // This has an assumption about how the user would like the undo work. the user doesn't care
     // about the changes it makes to a particular cell, but only the last change. This change is
     // saved in the moves stack.
-    func undo(button: SKButton){
+    private func undo(button: SKButton){
+
         resetColors()
         if userMoves.isEmpty {
             return
@@ -725,7 +328,7 @@ class GameScene: SKScene {
         isUserFirstUndo = false
     }
     
-    func printSk(stk: Stack<(SKButton,String)>){
+    private func printSk(stk: Stack<(SKButton,String)>){
         var r = stk
         while !r.isEmpty {
             if r.peek()?.1 == ""{
@@ -738,7 +341,9 @@ class GameScene: SKScene {
         
         print("========>")
     }
-    func checkSudokuCorrectness(button: SKButton){
+    
+    // This checks if the user solution is correct and give its score.
+    private func checkSudokuCorrectness(button: SKButton){
         var correct = true
         let userSolution = getUserSolutionAttempt(board: boardCells)
         
@@ -751,25 +356,14 @@ class GameScene: SKScene {
             }
         }
         
-        viewController?.congratulateUser(correct: correct)
-    
-        if correct {
-            /*
-            let ac = UIAlertController(title: "Correct", message: "Good Job",
-                                    preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .cancel))
-            view?.window?.rootViewController?.present(ac, animated: true)*/
-        }else{
-            /*
-            let ac = UIAlertController(title: "Incorrect", message: "Correct it Or Quit",
-                                       preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .cancel))
-            view?.window?.rootViewController?.present(ac, animated: true)
-            */
-        }
+        let timeSeconds = gameLevel.getTimeInSeconds() - countDown
+        let time = secondsToHoursMinutesSeconds(seconds: timeSeconds)
+        
+        viewController?.congratulateUser(correct: correct, time: time, level: gameLevel.getNameLevel())
     }
     
-    func getUserSolutionAttempt(board: [[SKButton]])->[[String]]{
+    // This gets the user solution from the game board.
+    private func getUserSolutionAttempt(board: [[SKButton]])->[[String]]{
         
         var userSolution = [[String]]()
         for y in 0..<board.count{
@@ -789,8 +383,14 @@ class GameScene: SKScene {
         }
         return userSolution
     }
+    
+    // This changes the selected cell's number in the game board according to the button number that
+    // was pressed by the user.
+    private func changeNumber(button: SKButton){
         
-    func changeNumber(button: SKButton){
+        if !hasGameSarted {
+            return
+        }
         
         let number = button.getLabel()
         if selectedCell.getFontColor() == UIColor.init(red: 1, green: 1, blue: 1, alpha: 1) {
@@ -845,7 +445,176 @@ class GameScene: SKScene {
         }
     }
     
-    func configureGameBoard(){
+    // Finds the first empty cell in the game board reading the Sudoku puzzle from left to right.
+    private func findEmptyCell(sudokuPuzzle: [[String]])->(y :Int, x :Int){
+        var x = -1
+        var y = -1
+        
+        var indices = [(y: Int, x: Int)]()
+        for j in 0..<sudokuPuzzle.count{
+            for i in 0..<sudokuPuzzle[0].count{
+                
+                if sudokuPuzzle[j][i] == BLACKCOLORSYMBOL.name{
+                    y = j
+                    x = i
+                    indices.append((y, x))
+                }
+            }
+        }
+        if indices.isEmpty{
+            return (-1, -1)
+        }
+        
+        //let randomIndex = Int.random(in: 0..<indices.count)
+        return indices[0]//randomIndex]
+    }
+
+    // resets the cell colors to its normal.
+    private func resetColors(){
+        for cell in cellsWithSameColor {
+            cell.0.color = cell.1
+        }
+        cellsWithSameColor = []
+    }
+    
+    // This gets called when the user pressed a key in the game board and highlights all the cells
+    // in the game board with the same number.
+    private func pressedCellButtonBoard(cell: SKButton){
+        
+        // Before changing the number of the new slected cell, reset the colors of the
+        // previous cells to normal color.
+        resetColors()
+        
+        // If the cell has a number
+        if cell.getLabel() != EMPTYCELLCONTENT {
+            let targetColor = cell.getLabel()
+    
+            // Make the cells have a new color momentarily
+            cellsWithSameColor = findAllCellsWithColor(color: targetColor, boardCells: boardCells)
+            for cell in cellsWithSameColor {
+                var color = UIColor.black
+                for colorSymbol in COLORSYMBOLS{
+                    if colorSymbol.name == targetColor{
+                        color  = colorSymbol.color
+                    }
+                }
+                cell.0.color = color
+            }
+        }
+        
+        selectedCell.state = .Active
+        cell.state = .Highlighted
+        selectedCell = cell
+    }
+    
+    // Find all the cell that have the same color. In other words, it finds all the cells that have
+    // the same number and store its actual color in the game board.
+    private func findAllCellsWithColor(color: String, boardCells: [[SKButton]])->[(SKButton, UIColor)]{
+        var sameColorCells = [(SKButton, UIColor)]()
+        for y in 0..<boardCells.count {
+            for x in 0..<boardCells[0].count {
+                if boardCells[y][x].getLabel() == color {
+                    sameColorCells.append((boardCells[y][x], boardCells[y][x].color))
+                }
+            }
+        }
+        return sameColorCells
+    }
+    
+    // If there is touching outside the gameboard, the game character must jump.
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if !isJumping && !gameCharacter.isDead(){
+            isJumping = true
+            
+            gameCharacter.performJump(completion: { self.isJumping = false})
+        }
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        // Called before each frame is rendered
+    }
+    
+    /**************************************************************************
+     *******************This animates the bacground and collitions*************
+     **************************************************************************/
+    
+    // This animates the the two background mountains with different speeds
+    private func animateBackground(){
+ 
+        animateBackgroundElement(element: "mountain1_0", elementTwin: "mountain1_1", duration: 2)
+        animateBackgroundElement(element: "mountain2_0", elementTwin: "mountain2_1", duration: 15)
+    }
+    // This stops the animation of the mountains.
+    private func stopBackGroundAnimation(){
+        let backgroundMountain = childNode(withName: "mountain2_0") as? SKSpriteNode
+        let backgroundTwinMountain = childNode(withName: "mountain2_1") as? SKSpriteNode
+        let foregroundMountain = childNode(withName: "mountain1_0") as? SKSpriteNode
+        let foregroundTwinMountain = childNode(withName: "mountain1_1") as? SKSpriteNode
+        backgroundMountain?.removeAllActions()
+        backgroundTwinMountain?.removeAllActions()
+        foregroundMountain?.removeAllActions()
+        foregroundTwinMountain?.removeAllActions()
+    }
+    // Animates a background element that is moving from right to left.
+    private func animateBackgroundElement(element: String, elementTwin: String, duration: TimeInterval){
+        
+        let foreground = childNode(withName: element) as? SKSpriteNode
+        let foregroundTwin = childNode(withName: elementTwin) as? SKSpriteNode
+        
+        if let foreground = foreground{
+            if let foregroundTwin = foregroundTwin{
+                
+
+                let mountainWidth = foreground.size.width
+        
+                let moveLeft = SKAction.moveBy(x: -mountainWidth, y: 0, duration: duration)
+                let moveReset = SKAction.moveBy(x: mountainWidth, y: 0, duration: 0)
+                let moveLoop = SKAction.sequence([moveLeft,moveReset])
+                let moveForever = SKAction.repeatForever(moveLoop)
+                
+                foreground.run(moveForever)
+                foregroundTwin.run(moveForever)
+            }
+        }
+    }
+
+    // This animates the collition of the shuriken with the game character.
+    private func animateSmokeCollition(){
+        
+        let smoke = SKSpriteNode(imageNamed: "Smoke_000")
+        smoke.position = gameCharacter.getPosition()
+        smoke.zPosition = 2
+        smoke.size = gameCharacter.getSize()
+        
+        addChild(smoke)
+        var framesSmoke = [SKTexture]()
+        
+        let textureAtlas = SKTextureAtlas(named: "Smoke")
+        for i in 0..<textureAtlas.textureNames.count {
+            let numberfile = String(format: "%02d", i)
+            framesSmoke.append(textureAtlas.textureNamed("Smoke_0" + numberfile))
+        }
+        
+        
+        // Run the frames
+        if MusicPlayer.shared.getSound() {
+            let sound = SKAction.playSoundFileNamed(SoundFileName.Collition.rawValue
+                                                    , waitForCompletion: false)
+            smoke.run(sound)
+        }
+        
+        let endAction = SKAction.removeFromParent()
+        let animate = SKAction.animate(with: framesSmoke, timePerFrame: 0.05)
+        smoke.run(SKAction.sequence ([ animate, endAction]))
+    }
+    
+    /**************************************************************************
+     *************This Configures the game board, number pad and buttons ******
+     **************************************************************************/
+    
+    // This configure the game board where the sudoku puzzle will be displayed.
+    private func configureGameBoard(){
         gameBoard = childNode(withName: "board") as? SKSpriteNode
         if let gameBoard  = gameBoard{
             
@@ -854,12 +623,11 @@ class GameScene: SKScene {
             gameBoard.yScale = 1
             
             gameBoard.size = CGSize(width: 320,height: 320)
-            gameBoard.color = .white//UIColor(red: 0, green: 0, blue: 230/255, alpha: 1)
-            // TODO: maybe blue
-            // Let's calculate the side length of each cell square
+            gameBoard.color = .white
             
+            // Let's calculate the side length of each cell square.
             let numberOfCellsPerRow = 9
-            var sideLength = (gameBoard.size.height - separation*10) / CGFloat(numberOfCellsPerRow)
+            let sideLength = (gameBoard.size.height - separation*10) / CGFloat(numberOfCellsPerRow)
 
             // let's setup and add all cells of the board
             let yTopLeftCoordinate = gameBoard.size.height/2
@@ -898,7 +666,7 @@ class GameScene: SKScene {
                     cell.position = CGPoint(x: shiftDistanceX + sideLength/2,
                                             y: shiftDistanceY - sideLength/2)
                     cell.name = "cell" + String(cellNumber)
-                    /*
+                    /* TODO: Delete
                     if theSudokuPuzzle[i][j] != BLACKCOLORSYMBOL.name {
                         cell.changeLabel(text: theSudokuPuzzle[i][j])
                         cell.changeFontColor(color: .black)
@@ -922,9 +690,7 @@ class GameScene: SKScene {
                 shiftDistanceY = shiftDistanceY - separation - sideLength
             }
             
-            // TODO create my own alert message window for the game
             let messageBox = SKSpriteNode()
-            //messageBox.color = .green
             messageBox.position = .zero
             messageBox.size = CGSize(width: gameBoard.size.width - 2*sideLength, height: gameBoard.size.height - 4*sideLength)
             
@@ -943,576 +709,209 @@ class GameScene: SKScene {
             message.verticalAlignmentMode = .center
             
             gameBoard.addChild(message)
-            //messageBox.addChild(message)
             
             messageBox.zPosition = 1
             messageBox.isHidden = false
-            
         }
     }
     
-    func resetColors(){
-        for cell in cellsWithSameColor {
-            cell.0.color = cell.1
-        }
-        cellsWithSameColor = []
-    }
-    
-    func pressedCellButtonBoard(cell: SKButton){
-        
- 
-        // Before making changing the colors of the new sleected cell, reset the colors of the
-        // previous cells to normal color
-        resetColors()
-        
-        // If the cell has a number
-        if cell.getLabel() != EMPTYCELLCONTENT {
-            let targetColor = cell.getLabel()
-    
-            // Make the cells have a new color momentarily
-            cellsWithSameColor = findAllCellsWithColor(color: targetColor, boardCells: boardCells)
-            for cell in cellsWithSameColor {
-                var color = UIColor.black
-                for colorSymbol in COLORSYMBOLS{
-                    if colorSymbol.name == targetColor{
-                        color  = colorSymbol.color
-                    }
-                }
-                
-                cell.0.color = color
-            }
-        }
-        
-        selectedCell.state = .Active
-        cell.state = .Highlighted
-        selectedCell = cell
-    }
-    
-    func findAllCellsWithColor(color: String, boardCells: [[SKButton]])->[(SKButton, UIColor)]{
-        var sameColorCells = [(SKButton, UIColor)]()
-        for y in 0..<boardCells.count {
-            for x in 0..<boardCells[0].count {
-                if boardCells[y][x].getLabel() == color {
-                    sameColorCells.append((boardCells[y][x], boardCells[y][x].color))
-                }
-            }
-        }
-        return sameColorCells
-    }
-    
-    func stringSudokuToDoubleArraySudoku(size :Int, sudoku: String) ->[[String]]{
-        
-        var arraySudoku = [[String]]()
-        for y in 0..<size{
-            var row = [String]()
-            for x in 0..<size{
-                row.append(sudoku[x + y*size])
-            }
-            arraySudoku.append(row)
-        }
-        return arraySudoku
-    }
-    
-    func doubleArraySudokuToStringSudoku(size :Int, sudoku: [[String]]) -> String{
-        var stringSudoku = String()
-        for y in 0..<size{
-            for x in 0..<size{
-                stringSudoku = stringSudoku + sudoku[y][x]
-            }
-        }
-        return stringSudoku
-    }
-    
-    func generateSudokuByShuffling(size: Int, sudoku :String)->String{
-        
-        //TODO: Check that width and height are integers
-        var shuffledSudoku = String()
-        // TODO: Shuffle the numbers or colors
-        
-        // shuffle rows
-        var doubleArraySudoku = stringSudokuToDoubleArraySudoku(size: size, sudoku: sudoku)
-        
-        //print(doubleArraySudoku)
-        // TODO: Check that size is an integer from the perfect squares set
-        let blockSize = Int(Double(size).squareRoot())
-        
-        var bands = [[String]]()
-        for y in 0..<size{
-            
-            bands.append(doubleArraySudoku[y])
-            // Shuffle rows within each band
-            if (y + 1)%blockSize == 0{
-                
-                var pool = blockSize
-                for x in 0..<blockSize{
-                    let randomIndex = Int.random(in: 0..<pool)
-                    doubleArraySudoku[x+y+1-blockSize] = bands[randomIndex]
-                    bands.remove(at: randomIndex)
-                    pool = pool - 1
-                }
-                bands = [[String]]()
-            }
-        }
-        
-
-        // shuffle columns
-        var stacks = [[String]]()
-        
-        for y in 0..<size{
-            var stack = [String]()
-            for x in 0..<size{
-                stack.append(doubleArraySudoku[x][y])
-            }
-            stacks.append(stack)
-         
-            // Shuffle columns within each stack
-            if (y + 1)%blockSize == 0{
-                
-                var pool = blockSize
-                for x in 0..<blockSize{
-                    let randomIndex = Int.random(in: 0..<pool)
-                    
-                    // Put each random column into the column
-                    
-                    for i in 0..<size{
-                        doubleArraySudoku[i][x + y + 1 - blockSize] = stacks[randomIndex][i]
-                    }
-                    
-                    stacks.remove(at: randomIndex)
-                    pool = pool - 1
-                }
-                stacks = [[String]]()
-            }
-        }
-        
-        // shuffle bands
-        
-        bands = [[String]]()
-        for i in 0..<size{
-            bands.append(doubleArraySudoku[i])
-        }
-        
-        var poolOfBands = blockSize
-        var randomBandIndex:Int = 0
-        for y in 0..<blockSize{
-  
-            // Let's put that band into one of the bands randomly chosen
-            randomBandIndex = blockSize*(Int.random(in: 0..<poolOfBands))
-            
-            var columnCounter = blockSize*y
-            
-            for i in randomBandIndex..<(blockSize+randomBandIndex){
-                doubleArraySudoku[columnCounter] = bands[i]
-                columnCounter = columnCounter + 1
-            }
-            let counter = blockSize+randomBandIndex-1
-            for j in 0..<blockSize{
-                
-                bands.remove(at: counter-j)
-            }
-            poolOfBands = poolOfBands - 1
-        }
-        
-        // TODOL: shuffle stacks
-        
-        shuffledSudoku = doubleArraySudokuToStringSudoku(size: size, sudoku: doubleArraySudoku)
-        return shuffledSudoku
-    }
-    
-    func generate9By9SudokuByBacktracking()->(puzzle: [[String]], solution:[[String]]){
-        // Star with an empty sudoku
-        // Populate the empty sudoku with 17( for 9X9 sudoku) colors as long as they dont break the
-        // rules of sudoku
-        
-        let sSudokuPuzzle = "000000000000000000000000000000000000000000000000000000000000000000020000000000000"
-        
-        
-        while(solutions.isEmpty){ // while sudoku has no solutions then keep iterating
-            
-            // populate 17 clues.
-            // I will probaly have to do backtracking here.
-            
-            // If the 17 colors sudoku has no solution it has to be repopulated again until it finds one
-            // puzzle with 17 colors that have at least one solution.
-            
-            // Make the solver solve the sudoku puzzle. We don't care how many solutions it can have
-            // the current puzzle, it is very very likely that it will have more than one
-            let sudoku = stringSudokuToDoubleArraySudoku(size: 9, sudoku: sSudokuPuzzle)
-            
-            sudokuSolver(sudokuPuzzle: sudoku)
-            
-            
-        }// TODO: There is a loop hole in all alogrithms like this or similar that build up a sudoku
-        // puzzle like this. Although the chances are very low, it can happen that you keep randomly
-        // choosing a puzzle that has no solution. It will iterate forever. Maybe if population of
-        // 17 clues works backtracking liminates this posibility
-        
-        // Grab randomly one of the solution to the sudoku puzzle, then one by one remove colors
-        // until it have more than two solutions. Then that the means that the previous sudoku
-        // puzzle had only one solution, return that puzzle
-        
-        let solution = solutions[0]
-        var puzzle = solutions[0]
-        
-        print(puzzle)
-        
-        
-        var x = -1
-        var y = -1
-        var move = BLACKCOLORSYMBOL.name
-        solutions = []
-        while(solutions.count < 2){
-            solutions = []
-            (y, x) = findNoneEmptyCell(sudokuPuzzle: puzzle)
-            
-            // The case that are all empty
-            if (y == -1) && (x == -1){
-                
-                print("Couldn't Make puzzle")
-                return ([],[])
-            }
-            
-            move = puzzle[y][x]
-            puzzle[y][x] = BLACKCOLORSYMBOL.name
-            
-            // Check that the new puzzle will not have more than two solutions
-            sudokuSolver(sudokuPuzzle: puzzle)
-        }
-        
-        // undo the move that generated two
-        puzzle[y][x] = move
-    
-        return (puzzle, solution)
-    }
-    
-    // TODO: Maybe we dont need randomly but just the first one it finds
-    func findNoneEmptyCell(sudokuPuzzle: [[String]])->(y: Int, x: Int){
-        
-        var x = -1
-        var y = -1
-        
-        var indices = [(y: Int, x: Int)]()
-        for j in 0..<sudokuPuzzle.count{
-            for i in 0..<sudokuPuzzle[0].count{
-                
-                if sudokuPuzzle[j][i] != BLACKCOLORSYMBOL.name{
-                    y = j
-                    x = i
-                    indices.append((y, x))
-                }
-            }
-        }
-        
-        if indices.isEmpty{
-            return (-1, -1)
-        }
-        
-        let randomIndex = Int.random(in: 0..<indices.count)
-        
-        return indices[randomIndex]
-        
-    }
-    
-    func findEmptyCell(sudokuPuzzle: [[String]])->(y :Int, x :Int){
-        var x = -1
-        var y = -1
-        
-        var indices = [(y: Int, x: Int)]()
-        for j in 0..<sudokuPuzzle.count{
-            for i in 0..<sudokuPuzzle[0].count{
-                
-                if sudokuPuzzle[j][i] == BLACKCOLORSYMBOL.name{
-                    y = j
-                    x = i
-                    indices.append((y, x))
-                }
-            }
-        }
-        
-        if indices.isEmpty{
-            return (-1, -1)
-        }
-        
-        //let randomIndex = Int.random(in: 0..<indices.count)
-        
-        return indices[0]//randomIndex]
-    }
-    
-    func sudokuSolver(sudokuPuzzle: [[String]]){
-        
-        // base case
-        if solutions.count >= 2{
-            return
-        }
-        
-        // Find the closest cell with no color
-        var x = -1
-        var y = -1
-
-        (y, x) = findEmptyCell(sudokuPuzzle: sudokuPuzzle)
-        
-        //print("Pair: ", y, " ",x)
-        // if there is no more cells with no color cells then is solved
-        if (x == -1) && (y == -1){
-            /*
-            print("")
-            print("This is a solution: ")
-            print("")
-
-            let su = doubleArraySudokuToStringSudoku(size: 9, sudoku: sudokuPuzzle)
-            printSudoku(sudoku: su)
-            */
-            solutions.append(sudokuPuzzle)
-            
-            return
-        }
-        
-        // Make a guess
-        // TODO: Implement implications. The sudoku solver should make implecations as far as it can
-        // go only then should make guesses. Making a guess of the possible value should be last
-        // resource. This should be done when optimizing the production of sudoku puzzles.
-        
-        // TODO: Change it to a random color when finishing the sudoku solver
-
-        for i in 0..<COLORSYMBOLS.count{
-
-            if isAPossibleMove(move: COLORSYMBOLS[i].name, x: x, y: y, sudokuPuzzle: sudokuPuzzle){
-                
-                // make move // TODO: Make it so that it goes through all posibilities so that it
-                // generates all solutions for now is producing only one solution
-                var newSudokuPuzzle = sudokuPuzzle
-                newSudokuPuzzle[y][x] = COLORSYMBOLS[i].name
-                sudokuSolver(sudokuPuzzle: newSudokuPuzzle)
-                
-                // We don't have to undo the move since the change was made to the newsudoku
-            }
-        }
-        return
-    }
-    
-    func isAPossibleMove(move: String, x: Int, y: Int, sudokuPuzzle: [[String]])->Bool{
-        
-        // Make sure that the move is an empty cell
-        if sudokuPuzzle[y][x] != BLACKCOLORSYMBOL.name {
-            return false
-        }
-        
-        // Check if making the move will not break any of the rules of sudoku.
-        // if it breaks one rule then return false meaning that the move is not possible.
-        
-        var modifiedPuzzle = sudokuPuzzle
-        modifiedPuzzle[y][x] = move
-        
-        return isValidSudoku(sudokuPuzzle: modifiedPuzzle)
-        
-    }
-    
-    func isValidSudoku(sudokuPuzzle: [[String]])->Bool{
-       
-        var row = [String]()
-        row = []
-        var columns = [[String]]()
-        for _ in 0..<sudokuPuzzle.count{
-            columns.append([])
-        }
-        var boxes = [[String]]()
-        for _ in 0..<sudokuPuzzle.count{
-            boxes.append([])
-        }
-        
-        for y in 0..<sudokuPuzzle.count{
-            for x in 0..<sudokuPuzzle[0].count{
-                
-                if sudokuPuzzle[y][x] != BLACKCOLORSYMBOL.name{
-                    // there shouldn't be two cells with the same values in a row
-                    if row.contains(sudokuPuzzle[y][x]){
-                        return false
-                    }
-                    // there shouldn't be two cells with the same values in a column
-                    row.append(sudokuPuzzle[y][x])
-                    if columns[x].contains(sudokuPuzzle[y][x]){
-                        return false
-                    }
-                    columns[x].append(sudokuPuzzle[y][x])
-                    
-                    let boxIndex = y/3*3 + x/3
-                    // there shouldn't be two cells with the same values in a block
-                    if boxes[boxIndex].contains(sudokuPuzzle[y][x]){
-                        return false
-                    }
-                    boxes[boxIndex].append(sudokuPuzzle[y][x])
-                }
-            }
-            row = []
-        }
-        return true
-    }
-
-    func printSudoku(sudoku: String){
-        
-        if(sudoku.count != 81){
-            print(sudoku.count)
-            print("Error: The sudoku is Incomplete")
-            return
-        }
-        
-        for y in 0..<9{
-            for x in 0..<9{
-                if( x%3 == 0 ){
-                    print(" ",terminator: "")
-                }
-                print(sudoku[sudoku.index(sudoku.startIndex, offsetBy: x + y*9)], terminator: " ")
-            }
-            if( (y+1)%3 == 0 ){
-                print()
-            }
-            print()
-        }
-        
-        print("=======================>")
-    }
-    
-    func performJump(completion:@escaping ()-> Void){
-        //gameCharacterSprite.removeAllActions()
-        let height: CGFloat = 60
-        let goUp = SKAction.moveBy(x: 0, y: height, duration: 0.4)
-        let goDown =  SKAction.moveBy(x: 0, y: -height, duration: 0.4)
-        
-        
-        let jumpAction = SKAction.sequence([goUp, goDown])
-        
-        gameCharacterSprite.run(jumpAction, completion: {[weak self] in
-            self?.isJumping = false
-            completion()
-            NSLog("IT PERFORMED JUMP")
-            
-        })
-    }
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        if !gameCharacter.isDead(){
-            isJumping = true
-            
-            performJump(completion: {})
-        }
-        
-        /*
-        for touch in touches {
-            let location = touch.location(in: self)
-            let touchedNode = atPoint(location)
-            if touchedNode.name == "road" {
-                print("is being toucheddd")
-                touchedNode.alpha = 0.7
-            }
-            print("here")
-        }*/
-        /*
-        let rotate = SKAction.rotate(byAngle: 1, duration: 5)
-        let repeatRotation = SKAction.repeatForever(rotate)
+    // This configure the number pad.
+    private func configureNumberPad(){
         if let gameBoard = gameBoard{
-            gameBoard.run(repeatRotation)
-        }*/
-        
-        if let gameBoard = gameBoard{
-            //gameBoard.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-            //gameBoard.xScale = 0.5
-            //gameBoard.yScale = 0.5
-        }
-        /*
-        for touch in touches {
-            let location = touch.location(in: self)
-            let touchedNode = atPoint(location)
-            if touchedNode.name == "cell0" {
-                print("is being toucheddd")
-                touchedNode.alpha = 0.7
-            }
-            print("here")
-        }*/
-    }
-    
-    
- /*
-    func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
-        }
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
-        }
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
-        }
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        if let label = self.numberCell {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-        }
-        
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
-    }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
-    
-   */
-    
-    func animateSmokeCollition(){
-        
-
-        let smoke = SKSpriteNode(imageNamed: "Smoke_000")
-        
-        smoke.position = gameCharacterSprite.position
-        smoke.zPosition = 2
-        smoke.size = gameCharacterSprite.size
-        
-        addChild(smoke)
-        var framesSmoke = [SKTexture]()
-        
-        let textureAtlas = SKTextureAtlas(named: "Smoke")
-        for i in 0..<textureAtlas.textureNames.count {
-            let numberfile = String(format: "%02d", i)
-            framesSmoke.append(textureAtlas.textureNamed("Smoke_0" + numberfile))
+            let padWidth = gameBoard.size.width
+            let padHeight = 2*(padWidth/5.0)
             
+            numberPad = SKSpriteNode(color: self.backgroundColor, size: CGSize(width: padWidth,
+                                                                               height: padHeight))
+            
+            if let numberPad = numberPad{
+                
+                numberPad.position = CGPoint(x: 0, y: -120)
+                // TODO: This is adding the number pad node right the way
+                // try to see if it can be added later in the code with all the number pad cells
+                // This should be done when optimizing the app for speed
+                numberPad.name = "numberPad"
+                
+                
+                self.addChild(numberPad)
+                
+                // Now, let's add all the numberic keys.
+                // calculate the square side length of each numeric key with the border
+                let sideLengthNumberKey  = (padWidth - 6*separation)/5.0
+                
+                // First half
+                var ycoordinatekeyPosition = separation/2.0 + sideLengthNumberKey/2.0
+                var xcoordinatekeyPosition = -(4*(sideLengthNumberKey/2.0) + 2*separation)
+                let xCoordinateLengthShift = sideLengthNumberKey + separation
+                
+                for i in 1...5{
+                    // let's configure and position the keys
+                    let numericKey = SKButton(color: UIColor(red: 0, green: 0, blue: 88/255,
+                                            alpha: 1), size: CGSize(width: sideLengthNumberKey,
+                                            height: sideLengthNumberKey))
+                    numericKey.name = "key" + String(i)
+                    numericKey.position = CGPoint(x: xcoordinatekeyPosition,
+                                                  y: ycoordinatekeyPosition)
+                    numericKey.state = .Active
+                    numericKey.changeLabel(text: String(i))
+                    numericKey.selectedHandler = changeNumber
+                    numericKey.zPosition = 1
+                    numberPad.addChild(numericKey)
+                    numberPadKeys.append(numericKey)
+                    xcoordinatekeyPosition = xcoordinatekeyPosition + xCoordinateLengthShift
+                }
+                ycoordinatekeyPosition = -ycoordinatekeyPosition
+                xcoordinatekeyPosition = -(3*(sideLengthNumberKey/2.0) + 2*separation)
+                
+                // Second Half
+                for i in 1...4{
+                    // let's configure and position the keys
+                    let numericKey = SKButton(color: UIColor(red: 0, green: 0, blue: 50/255,
+                                              alpha: 1), size: CGSize(width: sideLengthNumberKey,
+                                              height: sideLengthNumberKey))
+                    numericKey.name = "key" + String(i + 5)
+                    numericKey.position = CGPoint(x: xcoordinatekeyPosition,
+                                                  y: ycoordinatekeyPosition)
+                    numericKey.state = .Active
+                    numericKey.changeLabel(text: String(i + 5))
+                    numericKey.selectedHandler = changeNumber
+                    numericKey.zPosition = 1
+                    numberPad.addChild(numericKey)
+                    numberPadKeys.append(numericKey)
+                    xcoordinatekeyPosition = xcoordinatekeyPosition + xCoordinateLengthShift
+                }
+                
+                xcoordinatekeyPosition = (2*sideLengthNumberKey +
+                                          (sideLengthNumberKey/2.0 - separation/2.0)/2.0 +
+                                            2*separation + separation/2.0)
+                
+                
+                var buttonConfiguration = UIImage.SymbolConfiguration(weight: .bold)
+                
+                // configure Check button
+                let checkButtonlength =  sideLengthNumberKey/2.0 - separation/2.0
+                
+                let containerCheckButton = SKSpriteNode(color: self.backgroundColor, size: CGSize(width:
+                                           checkButtonlength,
+                                           height: sideLengthNumberKey))
+                
+                containerCheckButton.position = CGPoint(x: xcoordinatekeyPosition, y: ycoordinatekeyPosition)
+                
+                var playImage = UIImage(systemName: "checkmark", withConfiguration: buttonConfiguration)
+                playImage = playImage?.withRenderingMode(.alwaysOriginal)
+                playImage = playImage?.withColor(.green)
+                var texture = SKTexture(image: playImage!)
+                checkButton = SKButton(texture: texture, color: .white, size: CGSize(width:
+                                           checkButtonlength - 8*separation,
+                                           height: checkButtonlength - 8*separation))
+                
+                containerCheckButton.addChild(checkButton)
+                
+                checkButton.name = "checkButton"
+                checkButton.position = .zero
+                checkButton.state = .Highlighted
+                checkButton.colorBlendFactor = 1
+                checkButton.zPosition = 1
+                
+                checkButton.selectedHandler = checkSudokuCorrectness
+                numberPad.addChild(containerCheckButton)
+                
+                // configure undo button
+                let undoButtonLength = sideLengthNumberKey/2.0 - separation - separation/2.0
+                xcoordinatekeyPosition = -xcoordinatekeyPosition - separation/2.0
+                
+                let undoContainer  = SKSpriteNode(color: self.backgroundColor, size: CGSize(width: undoButtonLength,
+                                    height: sideLengthNumberKey))
+                
+                undoContainer.position = CGPoint(x: xcoordinatekeyPosition, y: ycoordinatekeyPosition)
+                
+                buttonConfiguration = UIImage.SymbolConfiguration(weight: .light)
+                var image = UIImage(systemName: "arrow.uturn.backward", withConfiguration: buttonConfiguration)
+                image = image?.withRenderingMode(.alwaysOriginal)
+                image = image?.withColor(.white)
+                texture = SKTexture(image: image!)
+                
+                let undoButton = SKButton(texture: texture, color: .white, size: CGSize(width:
+                                        undoButtonLength - 4*separation, height:undoButtonLength - 4*separation))
+                
+                undoContainer.addChild(undoButton)
+                undoButton.colorBlendFactor = 1
+                undoButton.name = "undoButton"
+                undoButton.selectedHandler = undo
+                undoButton.state = .Active
+                undoButton.zPosition = 1
+                numberPad.addChild(undoContainer)
+            }
+        }else{
+            print("Game Board has not been configure")
+        }
+    }
+    
+    // This configures the top bar where the buttons of the quit, time, and name are.
+    private func configureTopBarButtons() {
+        
+        let topBarFont = "PingFangHK-Semibold"
+        let topBarFontSize:CGFloat = 15.0
+        
+        
+        let sizeTopContainers = CGSize(width: 80, height: 20)
+        // Configure exit button
+        let exitContainer = childNode(withName: "exitContainer") as? SKSpriteNode
+        if let exitContainer = exitContainer{
+            exitContainer.setScale(1)
+            exitContainer.size = sizeTopContainers
+            let exitButton = SKButton(color: self.backgroundColor,
+                                      size: CGSize( width: exitContainer.size.width -
+                                            2*BORDERWIDTH, height:
+                                            exitContainer.size.height - 2*BORDERWIDTH))
+            
+            exitButton.state = .Active
+            exitButton.changeFont(fontName: topBarFont)
+            exitButton.changeLabel(text: "quit")
+            exitButton.changeFontSize(fontSize: topBarFontSize)
+            exitButton.selectedHandler = exitGame
+            exitContainer.addChild(exitButton)
         }
         
-        // Run the frames
+        // Configure timer label
+        let timerContainer = childNode(withName: "timerContainer") as? SKSpriteNode
+        if let timerContainer = timerContainer {
+            timerContainer.setScale(1)
+            timerContainer.size = sizeTopContainers
+            timerButton = SKButton(color: .systemPink,
+                                      size: CGSize( width: timerContainer.size.width -
+                                            2*BORDERWIDTH, height:
+                                            timerContainer.size.height - 2*BORDERWIDTH))
+            
+            // We need a monospace font, so that the displayed time doesn't look like moving
+            timerButton.changeFont(fontName: "Courier-Bold")
+            countDown = gameLevel.getTimeInSeconds()
+            timerButton.changeLabel(text: secondsToHoursMinutesSeconds(seconds: countDown))
+            timerButton.changeFontSize(fontSize: topBarFontSize)
+            timerContainer.addChild(timerButton)
+        }
         
-        let endAction = SKAction.removeFromParent()
-        smoke.run(SKAction.sequence ([SKAction.animate(with: framesSmoke,
-                                                       timePerFrame: 0.05), endAction]))
-        
+        // Configure pencil
+        let pencilContainer = childNode(withName: "pencilContainer") as? SKSpriteNode
+        if let pencilContainer = pencilContainer {
+            pencilContainer.setScale(1)
+            pencilContainer.size = sizeTopContainers
+            let pencilButton = SKButton(color: .systemGreen,
+                                      size: CGSize( width: pencilContainer.size.width -
+                                            2*BORDERWIDTH, height:
+                                            pencilContainer.size.height - 2*BORDERWIDTH))
+            
+            pencilButton.changeFont(fontName: topBarFont)
+            if let gameCharacterName = gameCharacterName {
+                pencilButton.changeLabel(text: gameCharacterName)
+            }
+            pencilButton.changeFontSize(fontSize: 15)
+            pencilButton.state = .Active
+            pencilContainer.addChild(pencilButton)
+        }
     }
     
     
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-       
-    }
- 
 }
 extension String{
     
@@ -1546,25 +945,29 @@ extension GameScene: SKPhysicsContactDelegate {
         gameCharacter.hitBy(points: DAMAGEPOINTS)
         animateSmokeCollition()
         
-        
         if gameCharacter.isDead() {
-            
             stopBackGroundAnimation()
-            
-            animateGameCharacterHurt(completion: {
-                self.gameCharacterSprite.removeAllActions()
-                self.animateGameCharacterDying()})
+            gameCharacter.animateGameCharacterHurt(completion: {
+                self.gameCharacter.animateGameCharacterDying()
+            })
             stopTime()
             
             // Go to Score View controller
+            let timeSeconds = gameLevel.getTimeInSeconds() - countDown
+            let time = secondsToHoursMinutesSeconds(seconds: timeSeconds)
+            let levelName = gameLevel.getNameLevel()
+            
+            print(countDown)
+            print(levelName)
+            print(time)
             DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {[weak self] in
-                self?.viewController?.congratulateUser(correct: false)
+                
+                self?.viewController?.congratulateUser(correct: false, time: time, level: levelName)
             })
     
         }else{
-            animateGameCharacterHurt(completion: animateGameCharacterRunning)
+            gameCharacter.animateGameCharacterHurt(completion: gameCharacter.animateGameCharacterRunning)
         }
-
         
         // When a collition exists delete the weapon
         if bodyA.categoryBitMask == PhysicsCategory.weapon &&

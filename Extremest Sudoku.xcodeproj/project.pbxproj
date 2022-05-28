@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		115002AA283EA6600015CCCB /* Tank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115002A9283EA6600015CCCB /* Tank.swift */; };
+		115002AD283F42050015CCCB /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115002AC283F42050015CCCB /* MusicPlayer.swift */; };
+		115002B0283F47430015CCCB /* click.wav in Resources */ = {isa = PBXBuildFile; fileRef = 115002AF283F47430015CCCB /* click.wav */; };
+		115002B2283F4B610015CCCB /* Naruto.wav in Resources */ = {isa = PBXBuildFile; fileRef = 115002B1283F4B610015CCCB /* Naruto.wav */; };
+		115002B4283F56760015CCCB /* narutoAdventure.wav in Resources */ = {isa = PBXBuildFile; fileRef = 115002B3283F56760015CCCB /* narutoAdventure.wav */; };
+		115002B6283F567F0015CCCB /* adventure.wav in Resources */ = {isa = PBXBuildFile; fileRef = 115002B5283F567F0015CCCB /* adventure.wav */; };
+		115002B8283F5E220015CCCB /* jump.wav in Resources */ = {isa = PBXBuildFile; fileRef = 115002B7283F5E220015CCCB /* jump.wav */; };
+		115002BA283F61060015CCCB /* shuriken.wav in Resources */ = {isa = PBXBuildFile; fileRef = 115002B9283F61050015CCCB /* shuriken.wav */; };
+		115002BC283F62920015CCCB /* crash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 115002BB283F62920015CCCB /* crash.wav */; };
+		115002BE283F63880015CCCB /* gun.wav in Resources */ = {isa = PBXBuildFile; fileRef = 115002BD283F63880015CCCB /* gun.wav */; };
+		115002C02841DF7E0015CCCB /* piano.wav in Resources */ = {isa = PBXBuildFile; fileRef = 115002BF2841DF7E0015CCCB /* piano.wav */; };
+		11608329283DE159004ED22D /* Sudoku.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11608328283DE159004ED22D /* Sudoku.swift */; };
 		EB713C732727CC22002557DA /* Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB713C722727CC22002557DA /* Stack.swift */; };
 		EB713C762727D1F7002557DA /* DequeModule in Frameworks */ = {isa = PBXBuildFile; productRef = EB713C752727D1F7002557DA /* DequeModule */; };
 		EB713C782727D1F7002557DA /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = EB713C772727D1F7002557DA /* Collections */; };
@@ -48,6 +60,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		115002A9283EA6600015CCCB /* Tank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tank.swift; sourceTree = "<group>"; };
+		115002AC283F42050015CCCB /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
+		115002AF283F47430015CCCB /* click.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = click.wav; sourceTree = "<group>"; };
+		115002B1283F4B610015CCCB /* Naruto.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Naruto.wav; sourceTree = "<group>"; };
+		115002B3283F56760015CCCB /* narutoAdventure.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = narutoAdventure.wav; sourceTree = "<group>"; };
+		115002B5283F567F0015CCCB /* adventure.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = adventure.wav; sourceTree = "<group>"; };
+		115002B7283F5E220015CCCB /* jump.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = jump.wav; sourceTree = "<group>"; };
+		115002B9283F61050015CCCB /* shuriken.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = shuriken.wav; sourceTree = "<group>"; };
+		115002BB283F62920015CCCB /* crash.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crash.wav; sourceTree = "<group>"; };
+		115002BD283F63880015CCCB /* gun.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gun.wav; sourceTree = "<group>"; };
+		115002BF2841DF7E0015CCCB /* piano.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = piano.wav; sourceTree = "<group>"; };
+		11608328283DE159004ED22D /* Sudoku.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sudoku.swift; sourceTree = "<group>"; };
 		EB713C722727CC22002557DA /* Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stack.swift; sourceTree = "<group>"; };
 		EB739BFB2729F729007B4B44 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MenuViewController.swift; path = DataStructures/MenuViewController.swift; sourceTree = "<group>"; };
 		EB739BFD272A2F15007B4B44 /* ScoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreViewController.swift; sourceTree = "<group>"; };
@@ -102,6 +126,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		115002AB283F41A30015CCCB /* GlobalAccess */ = {
+			isa = PBXGroup;
+			children = (
+				115002AC283F42050015CCCB /* MusicPlayer.swift */,
+			);
+			path = GlobalAccess;
+			sourceTree = "<group>";
+		};
+		115002AE283F47370015CCCB /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				115002BD283F63880015CCCB /* gun.wav */,
+				115002BF2841DF7E0015CCCB /* piano.wav */,
+				115002BB283F62920015CCCB /* crash.wav */,
+				115002B9283F61050015CCCB /* shuriken.wav */,
+				115002B7283F5E220015CCCB /* jump.wav */,
+				115002B3283F56760015CCCB /* narutoAdventure.wav */,
+				115002B5283F567F0015CCCB /* adventure.wav */,
+				115002B1283F4B610015CCCB /* Naruto.wav */,
+				115002AF283F47430015CCCB /* click.wav */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		EB713C712727CBDF002557DA /* DataStructures */ = {
 			isa = PBXGroup;
 			children = (
@@ -111,6 +159,8 @@
 				EBDDD8FF27324FA400F5EB53 /* ImagePickerCollectionViewCell.swift */,
 				EBDDD9012733230900F5EB53 /* GameCharacter.swift */,
 				EBDDD90327334DD500F5EB53 /* Queue.swift */,
+				11608328283DE159004ED22D /* Sudoku.swift */,
+				115002A9283EA6600015CCCB /* Tank.swift */,
 			);
 			path = DataStructures;
 			sourceTree = "<group>";
@@ -138,6 +188,8 @@
 		EB8113B326F693D800D73573 /* Extremest Sudoku */ = {
 			isa = PBXGroup;
 			children = (
+				115002AE283F47370015CCCB /* Sounds */,
+				115002AB283F41A30015CCCB /* GlobalAccess */,
 				EB713C712727CBDF002557DA /* DataStructures */,
 				EB739BFB2729F729007B4B44 /* MenuViewController.swift */,
 				EB739BFD272A2F15007B4B44 /* ScoreViewController.swift */,
@@ -283,12 +335,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				115002B8283F5E220015CCCB /* jump.wav in Resources */,
 				EB8113C026F693D800D73573 /* Main.storyboard in Resources */,
+				115002B0283F47430015CCCB /* click.wav in Resources */,
+				115002BC283F62920015CCCB /* crash.wav in Resources */,
 				EB8113B726F693D800D73573 /* GameScene.sks in Resources */,
+				115002B6283F567F0015CCCB /* adventure.wav in Resources */,
+				115002BA283F61060015CCCB /* shuriken.wav in Resources */,
 				EBC11DBE273503C2005C62A1 /* SnowBackground.sks in Resources */,
+				115002C02841DF7E0015CCCB /* piano.wav in Resources */,
+				115002B4283F56760015CCCB /* narutoAdventure.wav in Resources */,
 				EB8113C226F693DB00D73573 /* Assets.xcassets in Resources */,
 				EBD275A826F819A60093323B /* LaunchScreen.storyboard in Resources */,
+				115002BE283F63880015CCCB /* gun.wav in Resources */,
 				EB8113B926F693D800D73573 /* Actions.sks in Resources */,
+				115002B2283F4B610015CCCB /* Naruto.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -315,6 +376,9 @@
 			files = (
 				EB739BFE272A2F15007B4B44 /* ScoreViewController.swift in Sources */,
 				EB8113BB26F693D800D73573 /* GameScene.swift in Sources */,
+				11608329283DE159004ED22D /* Sudoku.swift in Sources */,
+				115002AA283EA6600015CCCB /* Tank.swift in Sources */,
+				115002AD283F42050015CCCB /* MusicPlayer.swift in Sources */,
 				EB739BFC2729F729007B4B44 /* MenuViewController.swift in Sources */,
 				EBDDD90427334DD500F5EB53 /* Queue.swift in Sources */,
 				EB713C732727CC22002557DA /* Stack.swift in Sources */,
@@ -498,7 +562,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "ronalds.Extremest-Sudoku";
+				PRODUCT_BUNDLE_IDENTIFIER = com.iTrex22.leafSudoku;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -517,7 +581,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "ronalds.Extremest-Sudoku";
+				PRODUCT_BUNDLE_IDENTIFIER = com.iTrex22.leafSudoku;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;

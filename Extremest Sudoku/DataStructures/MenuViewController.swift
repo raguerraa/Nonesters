@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import AVFoundation
+
 
 class MenuViewController: UIViewController {
 
@@ -15,9 +17,24 @@ class MenuViewController: UIViewController {
     @IBOutlet weak var easyLevelButton: UIButton!
     @IBOutlet weak var hardLevelButton: UIButton!
     @IBOutlet weak var extremeLevelButton: UIButton!
-    //@IBOutlet weak var chooseCharacterButton: UIButton!
+    @IBOutlet weak var speakerButton: UIButton!
     
     @IBOutlet weak var chooseCharacterCollection: UICollectionView!
+    
+    lazy var backgroundMusic: AVAudioPlayer? = {
+        
+        guard let url = Bundle.main.url(forResource: "piano", withExtension: "wav") else{
+            return nil
+        }
+        do {
+            let player =  try AVAudioPlayer(contentsOf: url)
+            player.numberOfLoops = -1
+            return player
+            
+        }catch{
+            return nil
+        }
+    }()
     
     let gameCharacters = [GameCharacter(name: "Naruto"),
                           GameCharacter(name: "Lee"),
@@ -29,18 +46,18 @@ class MenuViewController: UIViewController {
      
     override func viewDidLoad() {
         super.viewDidLoad()
-        //imagePicker.delegate = self
-        //imagePicker.dataSource = self
+        
         imageCollectionPicker.delegate = self
         imageCollectionPicker.dataSource = self
-        
-        
+        MusicPlayer.shared.setSounds(state: true)
+        configureSoundButton()
         print("inside view did laod menu controller")
     }
     
     override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
+        runBackgroundMusic()
         animateMenuAppareance()
         print("inside did apear view menu controller")
     }
@@ -54,8 +71,8 @@ class MenuViewController: UIViewController {
         easyLevelButton.alpha = 0
         hardLevelButton.alpha = 0
         extremeLevelButton.alpha = 0
-        //chooseCharacterButton.alpha = 0
         chooseCharacterCollection.alpha = 0
+        speakerButton.alpha = 0
     }
     
     func animateMenuAppareance(){
@@ -65,20 +82,19 @@ class MenuViewController: UIViewController {
             self.easyLevelButton.alpha = 1
             self.hardLevelButton.alpha = 1
             self.extremeLevelButton.alpha = 1
-            //self.chooseCharacterButton.alpha = 1
             self.chooseCharacterCollection.alpha = 1
+            self.speakerButton.alpha = 1
         })
     }
     
-    // TODO: make the disappearance work before leaving current view controller
+    // TODO: Make the disappearance work before leaving current view controller
     func animateMenuDisappearance(){
         
         easyLevelButton.alpha = 1
         hardLevelButton.alpha = 1
         extremeLevelButton.alpha = 1
-        //chooseCharacterButton.alpha = 1
-        
-        
+        speakerButton.alpha = 1
+    
         DispatchQueue.main.async {
           
         UIView.animate(withDuration: 4, animations: {
@@ -86,7 +102,8 @@ class MenuViewController: UIViewController {
             self.easyLevelButton.alpha = 0
             self.hardLevelButton.alpha = 0
             self.extremeLevelButton.alpha = 0
-            //self.chooseCharacterButton.alpha = 0
+            self.speakerButton.alpha = 0
+            
         })}
     }
     
@@ -101,6 +118,7 @@ class MenuViewController: UIViewController {
         let gameLevel = GameLevel()
         gameLevel.state = .Easy
         gameViewController.gameLevel = gameLevel
+        stopBackgroundMusic()
         self.present(gameViewController, animated: true, completion: nil)
     }
     @IBAction func goToGameSceneHard(_ sender: Any) {
@@ -113,6 +131,7 @@ class MenuViewController: UIViewController {
         let gameLevel = GameLevel()
         gameLevel.state = .Hard
         gameViewController.gameLevel = gameLevel
+        stopBackgroundMusic()
         self.present(gameViewController, animated: true, completion: nil)
         
     }
@@ -127,8 +146,52 @@ class MenuViewController: UIViewController {
         let gameLevel = GameLevel()
         gameLevel.state = .Extremest
         gameViewController.gameLevel = gameLevel
+        stopBackgroundMusic()
         self.present(gameViewController, animated: true, completion: nil)
     }
+    
+    private func runBackgroundMusic(){
+        
+        if MusicPlayer.shared.getSound(){
+            
+            backgroundMusic?.play()
+        }
+    }
+    
+    private func stopBackgroundMusic(){
+        if MusicPlayer.shared.getSound(){
+            backgroundMusic?.currentTime = 0
+            backgroundMusic?.stop()
+        }
+    }
+    
+    private func configureSoundButton(){
+        
+        if #available(iOS 15, *) {
+            speakerButton.setTitle("", for: .normal)
+            speakerButton.setImage(UIImage(systemName: "speaker.wave.2.fill"), for: .normal)
+        }else{
+            speakerButton.setTitle("Sound", for: .normal)
+            
+        }
+    }
+    
+    @IBAction func changeMusicState(_ sender: Any) {
+        
+        if MusicPlayer.shared.getSound(){
+            
+            stopBackgroundMusic()
+            MusicPlayer.shared.setSounds(state: false)
+            speakerButton.setImage(UIImage(systemName: "speaker.wave.2"), for: .normal)
+        }else{
+            
+            backgroundMusic?.prepareToPlay()
+            backgroundMusic?.play()
+            MusicPlayer.shared.setSounds(state: true)
+            speakerButton.setImage(UIImage(systemName: "speaker.wave.2.fill"), for: .normal)
+        }
+    }
+    
 }
 
 extension  MenuViewController:  UICollectionViewDelegate, UICollectionViewDataSource{
@@ -140,7 +203,7 @@ extension  MenuViewController:  UICollectionViewDelegate, UICollectionViewDataSo
         let cell  = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? ImagePickerCollectionViewCell
         cell?.image.image = UIImage(named: gameCharacters[indexPath.row].getName() + "_Idle_000")
         cell?.characterName.text = gameCharacters[indexPath.row].getName()
-        // TODO: ifix the force unwrap
+        
         return cell!
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -184,50 +247,3 @@ extension MenuViewController: UICollectionViewDelegateFlowLayout{
         return CGSize(width: 0, height: 0)
     }
 }
-//extension MenuViewController: {
-    
-//}
-
-/*UIPickerViewDelegate, UIPickerViewDataSource {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
-        return 1
-    }
-
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return 3
-    }
-
-    // MARK: UIPickerViewDelegate
-
-    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
-
-
-        var myImageView = UIImageView()
-
-        switch row {
-        case 0:
-            myImageView = UIImageView(image: UIImage(named:"Lee_Idle_000"))
-        case 1:
-            myImageView = UIImageView(image: UIImage(named:"Lee_Idle_001"))
-        case 2:
-            myImageView = UIImageView(image: UIImage(named:"Lee_Idle_002"))
-      
-
-        default:
-            myImageView.image = nil
-            print("item dsjdjsdj")
-
-            return myImageView
-        }
-        return myImageView
-    }
-
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-
-        // do something with selected row
-    }
-}*/

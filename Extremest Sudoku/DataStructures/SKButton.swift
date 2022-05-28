@@ -125,12 +125,21 @@ class SKButton: SKSpriteNode {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if isButtonEnabled {
           // run code assigned by other section
+            runSound(SoundFileName.TapFile.rawValue, onNode: self)
             selectedHandler(self)
+            
+            
             // change state back to active
             if state != .Highlighted{
                 
                 state = .Active
             }
+        }
+    }
+    
+    private func runSound(_ fileName: String, onNode: SKSpriteNode){
+        if MusicPlayer.shared.getSound(){
+            onNode.run(SKAction.playSoundFileNamed(fileName, waitForCompletion: false))
         }
     }
 

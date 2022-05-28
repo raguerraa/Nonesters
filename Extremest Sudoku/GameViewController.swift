@@ -7,7 +7,7 @@
 
 import UIKit
 import SpriteKit
-//import GameplayKit
+import AVFoundation
 
 class GameViewController: UIViewController {
     
@@ -15,6 +15,20 @@ class GameViewController: UIViewController {
     var currentGameScene: GameScene?
     var characterName = String()
     var gameLevel = GameLevel()
+    lazy var backgroundMusic: AVAudioPlayer? = {
+        
+        guard let url = Bundle.main.url(forResource: "adventure", withExtension: "wav") else{
+            return nil
+        }
+        do {
+            let player =  try AVAudioPlayer(contentsOf: url)
+            player.numberOfLoops = -1
+            return player
+            
+        }catch{
+            return nil
+        }
+    }()
     
 
     override func viewDidLoad() {
@@ -34,7 +48,7 @@ class GameViewController: UIViewController {
                 currentGameScene?.gameLevel = gameLevel
                 currentGameScene?.gameCharacterName = characterName
                 currentGameScene?.viewController = self
-                
+                runBackgroundMusic()
                 view.presentScene(scene)
                 
             }
@@ -47,16 +61,30 @@ class GameViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        
         currentGameScene?.initiateGame()
+    }
+    private func runBackgroundMusic(){
+        if MusicPlayer.shared.getSound(){
+            
+            backgroundMusic?.play()
+        }
+    }
+    private func stopBackgroundMusic(){
+        if MusicPlayer.shared.getSound(){
+            backgroundMusic?.stop()
+        }
     }
     
   
     
-    func congratulateUser(correct: Bool){
+    func congratulateUser(correct: Bool, time: String, level: String){
  
         let scoreViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "scoreViewController") as! ScoreViewController
+        
         scoreViewController.correct = correct
+        scoreViewController.time = time
+        scoreViewController.level = level
+        stopBackgroundMusic()
         
         scoreViewController.modalPresentationStyle = .fullScreen
         self.present(scoreViewController, animated: true, completion: nil)
