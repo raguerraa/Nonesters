@@ -28,7 +28,7 @@ class GameScene: SKScene {
     var gameLevel = GameLevel()
     
     // Default game character is Nartuo if no gameCharacterName is provided
-    private var gameCharacter = GameCharacter(name: "Naruto")
+    private var gameCharacter = GameCharacter(name: "Caterpillar")
     
     // Declare a gameViewController property so that the GameScene has acces to it
     weak var viewController : GameViewController?
@@ -54,7 +54,7 @@ class GameScene: SKScene {
     private let BLACKCOLORSYMBOL = Color(name: "0", color: .black)
     private let EMPTYCELLCONTENT = ""
     private let BORDERWIDTH: CGFloat = 1.0
-    private let YLEVELGAMEPOSITION: CGFloat = -275
+    private let YLEVELGAMEPOSITION: CGFloat = -245
     
     // Flag that tells if the user is jumping.
     private var isJumping = false
@@ -119,7 +119,7 @@ class GameScene: SKScene {
         if let gameCharacterName = gameCharacterName {
             gameCharacter.changeName(name: gameCharacterName)
         }
-        let gameCharacterSprite = gameCharacter.configureCharacter(x: size.width/2.0, y: YLEVELGAMEPOSITION)
+        let gameCharacterSprite = gameCharacter.configureCharacter(x: size.width/2.0 + 30, y: YLEVELGAMEPOSITION)
         addChild(gameCharacterSprite)
         gameCharacter.animateGameCharacterIdle()
         
@@ -208,7 +208,7 @@ class GameScene: SKScene {
             if attackTime == countDown {
                 _ =  attacks.pop()
                 let tank = Tank()
-                let weapon = tank.createWeapon(x: size.width/2.0, y: YLEVELGAMEPOSITION)
+                let weapon = tank.createWeapon(x: size.width/2.0, y: YLEVELGAMEPOSITION - 45)
                 addChild(weapon)
                 tank.throwWeapon()
             }
@@ -542,7 +542,7 @@ class GameScene: SKScene {
     // This animates the the two background mountains with different speeds
     private func animateBackground(){
  
-        animateBackgroundElement(element: "mountain1_0", elementTwin: "mountain1_1", duration: 2)
+        animateBackgroundElement(element: "mountain1_0", elementTwin: "mountain1_1", duration: 5)
         animateBackgroundElement(element: "mountain2_0", elementTwin: "mountain2_1", duration: 15)
     }
     // This stops the animation of the mountains.
@@ -583,9 +583,10 @@ class GameScene: SKScene {
     private func animateSmokeCollition(){
         
         let smoke = SKSpriteNode(imageNamed: "Smoke_000")
-        smoke.position = gameCharacter.getPosition()
+        smoke.position.x = gameCharacter.getPosition().x
+        smoke.position.y = gameCharacter.getPosition().y - 30
         smoke.zPosition = 2
-        smoke.size = gameCharacter.getSize()
+        smoke.size = CGSize(width: 150, height: 150)
         
         addChild(smoke)
         var framesSmoke = [SKTexture]()

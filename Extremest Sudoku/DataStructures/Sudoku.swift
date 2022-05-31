@@ -224,6 +224,8 @@ class Sudoku{
         
         // Undo the move that generated two solutions.
         puzzle[y][x] = move
+        
+        printSudoku(sudoku: doubleArraySudokuToStringSudoku(size: 9, sudoku: puzzle) )
     
         return (puzzle, solution)
     }

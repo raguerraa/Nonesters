@@ -48,11 +48,12 @@ class GameCharacter {
     func configureCharacter(x: CGFloat, y: CGFloat)->SKSpriteNode{
         
         gameCharacterSprite = SKSpriteNode(imageNamed: name + "_Idle_000")
-        gameCharacterSprite.size = CGSize(width: 150, height: 150)
+        gameCharacterSprite.size = CGSize(width: 230, height: 180)
         gameCharacterSprite.position.x = -x + gameCharacterSprite.size.width/2
         gameCharacterSprite.position.y = y
-        
+        gameCharacterSprite.xScale = -1
         gameCharacterSprite.zPosition = 0
+        
         
         // Add its physics
         let physicsRectangle = CGSize(width: gameCharacterSprite.size.width - 100,
@@ -85,9 +86,10 @@ class GameCharacter {
         
         
         for i in 0..<textureAtlas.textureNames.count {
-            let numberfile = String(format: "%02d", i)
+            let numberfile = String(format: "%03d", i)
+           
             gameCharacterFrames.append(
-                textureAtlas.textureNamed(characterName + "_" + characterAction + "_0" + numberfile))
+                textureAtlas.textureNamed(characterName + "_" + characterAction + "_" + numberfile))
             
         }
         
@@ -99,13 +101,13 @@ class GameCharacter {
     
     func animateGameCharacterHurt(completion: @escaping ()->Void){
         animateOnceGameCharacter(characterName: name,
-                                 characterAction: "Hurt",
+                                 characterAction: "Idle",
                                  timePerFrame: 0.06,
                                  completion: completion)
     }
     func animateGameCharacterDying(){
         self.gameCharacterSprite.removeAllActions()
-        animateOnceGameCharacter(characterName: name,
+        animateOnceGameCharacter(characterName: "All",
                                  characterAction: "Dying",
                                  timePerFrame: 0.09,
                                  completion: {})

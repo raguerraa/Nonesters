@@ -36,13 +36,17 @@ class MenuViewController: UIViewController {
         }
     }()
     
-    let gameCharacters = [GameCharacter(name: "Naruto"),
-                          GameCharacter(name: "Lee"),
-                          GameCharacter(name: "Neji"),
-                          GameCharacter(name: "Kakashi"),
-                          GameCharacter(name: "Sakura"),
-                          GameCharacter(name: "Zabuza")]
-    var chosenGameCharacterName = "Naruto"
+    let gameCharacters = [GameCharacter(name: "Caterpillar")
+                          ,GameCharacter(name: "Muscle")
+                          ,GameCharacter(name: "Plant")
+                          ,GameCharacter(name: "Bubbles")
+                          ,GameCharacter(name: "Blues")
+                          ,GameCharacter(name: "Lorenzo")
+                          ,GameCharacter(name: "Mint")
+                          ,GameCharacter(name: "Tongues")
+                     
+    ]
+    var chosenGameCharacterName = "Caterpillar"
      
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -201,7 +205,9 @@ extension  MenuViewController:  UICollectionViewDelegate, UICollectionViewDataSo
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell  = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? ImagePickerCollectionViewCell
-        cell?.image.image = UIImage(named: gameCharacters[indexPath.row].getName() + "_Idle_000")
+        cell?.image.image = UIImage(named: gameCharacters[indexPath.row].getName() + "_Idle_000")?.withHorizontallyFlippedOrientation()
+        cell?.image.contentMode = .scaleAspectFit
+      
         cell?.characterName.text = gameCharacters[indexPath.row].getName()
         
         return cell!
