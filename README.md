@@ -7,8 +7,9 @@ extremest, where each level gives you less time to complete the Sudoku puzzle. Y
 your favorite game character by swiping from right to left and from left to right. You can also
 mute and unmute the sound.
 
-![Screenshot](caterpillar.png)
-![Screenshot](sudoku.png)
+<img src="Images/caterpillar.png" alt="drawing" width="350"/>
+<img src="Images/sudoku.png" alt="drawing" width="350"/>
+
 
 
 The app starts at the `MenuViewController` where you choose your settings. The `MenuViewController`
